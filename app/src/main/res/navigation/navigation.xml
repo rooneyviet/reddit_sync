@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/subRedditFragment">
+
+    <fragment
+        android:id="@+id/subRedditFragment"
+        android:name="jp.zuikou.system.redditprojectsample1.SubRedditFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_sub_reddit" >
+        <action
+            android:id="@+id/action_subRedditFragment_to_secondNextTestFragment"
+            app:destination="@id/secondNextTestFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/secondNextTestFragment"
+        android:name="jp.zuikou.system.redditprojectsample1.SecondNextTestFragment"
+        android:label="2nd Screen"
+        tools:layout="@layout/fragment_second_next_test" />
+</navigation>

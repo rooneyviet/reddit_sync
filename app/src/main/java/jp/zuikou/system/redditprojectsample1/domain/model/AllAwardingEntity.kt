@@ -1,0 +1,20 @@
+package jp.zuikou.system.redditprojectsample1.domain.model
+
+data class AllAwardingEntity(val awardType: String?,
+                             val coinPrice: Int?,
+                             val coinReward: Int?,
+                             val count: Int?,
+                             val daysOfDripExtension: Int?,
+                             val daysOfPremium: Int?,
+                             val description: String?,
+                             val endDate: Int?,
+                             val iconHeight: Int?,
+                             val iconUrl: String?,
+                             val iconWidth: Int?,
+                             val id: String?,
+                             val isEnabled: Boolean?,
+                             val name: String?,
+                             val resizedIcons: List<ResizedIconEntity?>?,
+                             val startDate: Int?,
+                             val subredditCoinReward: Int?,
+                             val subredditId: String?)

@@ -1,0 +1,126 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'androidx.navigation.safeargs'
+
+android {
+    compileSdkVersion 29
+    defaultConfig {
+        applicationId "jp.zuikou.system.redditprojectsample1"
+        minSdkVersion 21
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.core:core-ktx:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+
+    implementation 'androidx.multidex:multidex:2.0.0'
+
+    ////////
+
+    implementation "net.danlew:android.joda:2.10.1.1"
+
+    implementation "com.jakewharton.timber:timber:4.7.1"
+
+    // AutoDispose
+    implementation "com.uber.autodispose:autodispose:0.8.0"
+    implementation "com.uber.autodispose:autodispose-kotlin:0.8.0"
+    implementation "com.uber.autodispose:autodispose-android:0.8.0"
+    implementation "com.uber.autodispose:autodispose-android-kotlin:0.8.0"
+    implementation "com.uber.autodispose:autodispose-android-archcomponents:0.8.0"
+
+    //rx permission
+    implementation "com.github.tbruyelle:rxpermissions:0.10.2"
+
+    //rxjava
+    implementation "io.reactivex.rxjava2:rxjava:2.2.6"
+    implementation "io.reactivex.rxjava2:rxandroid:2.1.0"
+    implementation "io.reactivex.rxjava2:rxkotlin:2.3.0"
+
+
+    //retrofit
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.5.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.5.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:3.12.1"
+
+
+//    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+
+
+    // Koin
+
+    //implementation "org.koin:koin-core:2.0.1"
+
+    //implementation "org.koin:koin-android:2.0.1"
+    implementation "org.koin:koin-android:2.0.1"
+    implementation "org.koin:koin-core-ext:2.0.1"
+    implementation "org.koin:koin-androidx-scope:2.0.1"
+    implementation "org.koin:koin-androidx-viewmodel:2.0.1"
+    //implementation "org.koin:koin-androidx-ext:2.0.1"
+
+
+    /*// Koin for Android
+    implementation "org.koin:koin-android:2.0.0"
+// Koin Android Scope features
+    implementation "org.koin:koin-android-scope:2.0.0"
+// Koin Android ViewModel features
+    implementation "org.koin:koin-android-viewmodel:2.0.0"
+// Koin Android Experimental features
+    implementation "org.koin:koin-android-ext:2.0.0"*/
+
+    //paging
+    implementation 'android.arch.paging:runtime:1.0.1'
+
+    // Kotlin RxBinding
+    implementation "com.jakewharton.rxbinding2:rxbinding-kotlin:2.0.0"
+    implementation "com.jakewharton.rxbinding2:rxbinding-support-v4-kotlin:2.0.0"
+    implementation "com.jakewharton.rxbinding2:rxbinding-appcompat-v7-kotlin:2.0.0"
+    implementation "com.jakewharton.rxbinding2:rxbinding-design-kotlin:2.0.0"
+    implementation "com.jakewharton.rxbinding2:rxbinding-recyclerview-v7-kotlin:2.0.0"
+
+
+    implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
+    kapt "androidx.lifecycle:lifecycle-compiler:2.0.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel:2.0.0"
+    implementation "androidx.lifecycle:lifecycle-reactivestreams-ktx:2.0.0"
+    implementation 'com.google.android:flexbox:1.1.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+
+
+    // Material Design
+    implementation "com.google.android.material:material:1.0.0"
+
+    // Navigation
+    implementation "android.arch.navigation:navigation-fragment-ktx:1.0.0"
+    implementation "android.arch.navigation:navigation-ui-ktx:1.0.0"
+
+
+    implementation "com.github.bumptech.glide:glide:4.9.0"
+    annotationProcessor "com.github.bumptech.glide:compiler:4.9.0"
+
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    implementation 'android.arch.paging:runtime:1.0.1'
+}
