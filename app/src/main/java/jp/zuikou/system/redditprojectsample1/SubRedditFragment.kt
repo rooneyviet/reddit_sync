@@ -90,7 +90,7 @@ class SubRedditFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(this.context)
         recyclerView.adapter = postsAdapter
 
-        postsViewModel.getPosts().observe(this,
+        postsViewModel.getPosts("r/popular","best").observe(this,
             Observer<PagedList<PostEntity>> {
                 postsAdapter.submitList(it)
             })

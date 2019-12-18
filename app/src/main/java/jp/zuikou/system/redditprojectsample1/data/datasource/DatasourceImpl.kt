@@ -13,7 +13,7 @@ class DatasourceImpl(private val service: PostsServiceAPI): Datasource {
         type: String?,
         page: String
     ): Single<Pair<Pagination, List<PostEntity>>> =
-        service.getPagedListPosts("r/popular", page) //TODO subReddit, type, page
+        service.getPagedListPosts(subReddit, type,page) //TODO subReddit, type, page
             .map { json ->
                 val list = json.data?.children
                     ?.map { it.data }

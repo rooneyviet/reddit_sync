@@ -8,7 +8,8 @@ import jp.zuikou.system.redditprojectsample1.data.model.response.JsonPostRespons
 import retrofit2.http.*
 
 interface PostsServiceAPI {
-    @GET("{subreddit}/hot.json")
+    @GET("{subreddit}/{type}.json")
     fun getPagedListPosts(@Path("subreddit", encoded = true) subReddit: String? = null,
+                          @Path("type") type: String? = null,
                           @Query("after") nextPage: String = ""): Single<JsonGenericResponseWrapper<JsonGenericList<JsonPostResponse>>>
 }
