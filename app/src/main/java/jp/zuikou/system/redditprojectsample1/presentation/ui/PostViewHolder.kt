@@ -24,12 +24,12 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         itemView.textViewAuthor.text = post.author
         itemView.textViewSubtitle.text = DateFormat.getDateInstance(DateFormat.FULL).format(post.createdUtc)
         itemView.imageViewThumb.transitionName = post.remoteId
-        val imageUrl = post.imagePreview?.let {
+        /*val imageUrl = post.imagePreview?.let {
             if(!it.isNullOrEmpty()){
                 it.last().url
             } else ""
         }?: ""
-        itemView.imageViewThumb.load(imageUrl)
+        itemView.imageViewThumb.load(imageUrl)*/
     }
 
 

@@ -51,7 +51,10 @@ class SubRedditFragment : Fragment() {
     //private lateinit var mAdapter2: PostsPagedListAdapter
 
 
-    private val postsAdapter: PostsPagedListAdapter by inject{ parametersOf({postsViewModel.retry()},
+    private val postsAdapter: PostsPagedListAdapter by inject{ parametersOf({
+        Timber.d("CLICKED")
+        postsViewModel.retry()
+    },
         {post: PostEntity, image: ImageView -> clickItem(post, image) }) }
 
     override fun onCreate(savedInstanceState: Bundle?) {

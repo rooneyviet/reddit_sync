@@ -1,10 +1,8 @@
 package jp.zuikou.system.redditprojectsample1.application
 
 import android.app.Application
-import androidx.multidex.MultiDexApplication
 import jp.zuikou.system.redditprojectsample1.BuildConfig
 import jp.zuikou.system.redditprojectsample1.di.injectBasicFeature
-import jp.zuikou.system.redditprojectsample1.di.injectLoggedInFeatures
 import net.danlew.android.joda.JodaTimeAndroid
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidFileProperties

@@ -8,6 +8,8 @@ import jp.zuikou.system.redditprojectsample1.domain.Pagination
 import jp.zuikou.system.redditprojectsample1.domain.requestvalue.RequestValues
 import jp.zuikou.system.redditprojectsample1.domain.usecase.UseCase
 import jp.zuikou.system.redditprojectsample1.presentation.util.UseCaseHandler
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 open class GenericDataSource<Response, RV: RequestValues>(
     private val useCase: UseCase<RV, Pair<Pagination, List<Response>>>,
@@ -36,7 +38,7 @@ open class GenericDataSource<Response, RV: RequestValues>(
                 networkState.postValue(NetworkState.SUCCESS)
                 callback.onResult(result.second, null, if (result.first.nextPage.isEmpty()) null else result.first)
             }, { throwable ->
-                //handleError(throwable) { loadInitial(params, callback) }
+                handleError(throwable) { loadInitial(params, callback) }
             })
         )
     }
@@ -52,7 +54,7 @@ open class GenericDataSource<Response, RV: RequestValues>(
                 networkState.postValue(NetworkState.SUCCESS)
                 callback.onResult(result.second, result.first)
             }, { throwable ->
-                //handleError(throwable) { loadAfter(params, callback) }
+                handleError(throwable) { loadAfter(params, callback) }
             })
         )
     }
@@ -66,12 +68,13 @@ open class GenericDataSource<Response, RV: RequestValues>(
             }
             //.compose(ErrorHandler())
 
-    /*@Suppress("UNUSED_EXPRESSION")
+    @Suppress("UNUSED_EXPRESSION")
     private fun handleError(throwable: Throwable?, functionCall: () -> Unit) {
         retry = functionCall
-        val error = NetworkState.error((throwable as PresentationThrowable).failure)
-        networkState.postValue(error)
-    }*/
+        if (throwable is UnknownHostException || throwable is SocketTimeoutException){
+            networkState.postValue(NetworkState.NO_INTERNET)
+        }
+    }
 
     override fun loadBefore(
         params: LoadParams<Pagination>,

@@ -50,8 +50,6 @@ val repositoryModule = module {
 }
 
 val postsModule: Module = module {
-    //factory { LoginDatasourceImpl(loginService = get()) as LoginDatasource }
-
     single<Datasource> { DatasourceImpl(get()) }
     single { PostsViewModel(get() ) }
     single<PostRepositoryPresent> { PostRepositoryPresentImpl (get(), getProperty(PROPERTY_PAGED_LIST)) }
