@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import jp.zuikou.system.redditprojectsample1.R
 import jp.zuikou.system.redditprojectsample1.domain.model.RSubSubcribersEntity
+import jp.zuikou.system.redditprojectsample1.util.extension.loadImageCircle
 import kotlinx.android.synthetic.main.rrsubscriberslayout.view.*
 
 class DrawerLayoutPagedListAdapter(private val subClicked: (subreddit: String)-> Unit):
@@ -38,6 +39,23 @@ class DrawerLayoutPagedListAdapter(private val subClicked: (subreddit: String)->
                     subClicked.invoke(prefixDisplaySub)
                 }
             }
+
+            if(rSubSubcribersEntity?.iconImg !=null && rSubSubcribersEntity.iconImg.isNullOrEmpty()){
+                itemView.subcribersImage.loadImageCircle(rSubSubcribersEntity.iconImg)
+            } else {
+                rSubSubcribersEntity?.communityIcon?.let {
+                    itemView.subcribersImage.loadImageCircle(it)
+                }
+            }
+            /*rSubSubcribersEntity?.communityIcon?.let {
+
+                itemView.subcribersImage.loadImageCircle(it)
+            } ?: kotlin.run {
+                rSubSubcribersEntity?.iconImg?.let {
+                    itemView.subcribersImage.loadImageCircle(it)
+                }
+            }*/
+
         }
 
     }
