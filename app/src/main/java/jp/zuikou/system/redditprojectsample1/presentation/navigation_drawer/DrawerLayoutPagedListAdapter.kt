@@ -40,7 +40,7 @@ class DrawerLayoutPagedListAdapter(private val subClicked: (subreddit: String)->
                 }
             }
 
-            if(rSubSubcribersEntity?.iconImg !=null && rSubSubcribersEntity.iconImg.isNullOrEmpty()){
+            if(rSubSubcribersEntity?.iconImg !=null && rSubSubcribersEntity.iconImg.isNotEmpty()){
                 itemView.subcribersImage.loadImageCircle(rSubSubcribersEntity.iconImg)
             } else {
                 rSubSubcribersEntity?.communityIcon?.let {
