@@ -13,7 +13,7 @@ class DatasourceImpl(private val service: PostsServiceAPI): Datasource {
     override fun getPagedListPosts(
         subReddit: String?,
         type: String?,
-        page: String
+        page: String?
     ): Single<Pair<Pagination, List<PostEntity>>> =
         service.getPagedListPosts(subReddit, type,page) //TODO subReddit, type, page
             .map { json ->
@@ -29,13 +29,13 @@ class DatasourceImpl(private val service: PostsServiceAPI): Datasource {
 
     override fun getPagedListMineSubscribers(nextPage: String?,
                                              limit: Int?): Single<Pair<Pagination, List<RSubSubcribersEntity>>> =
-        service.getPagedListMineSubscribers()
+        service.getPagedListMineSubscribers(nextPage= nextPage, limit = limit)
             .map { json->
                 val list = json.data?.children
                     ?.map { it.data }
                     ?.mapNotNull { it }
 
                 val rsubcribersList = JsonRSubSubcribersMapper.transformToList(list?: emptyList())
-                Pair(Pagination(json.data?.after?: ""), rsubcribersList)
+                Pair(Pagination(json.data?.after), rsubcribersList)
             }
 }

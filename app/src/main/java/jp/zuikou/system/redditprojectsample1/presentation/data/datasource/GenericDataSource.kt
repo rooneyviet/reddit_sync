@@ -36,7 +36,8 @@ open class GenericDataSource<Response, RV: RequestValues>(
         compositeDisposable.add(useCaseCall()
             .subscribe({ result ->
                 networkState.postValue(NetworkState.SUCCESS)
-                callback.onResult(result.second, null, if (result.first.nextPage.isEmpty()) null else result.first)
+                callback.onResult(result.second, null,
+                    if (result.first.nextPage.isNullOrEmpty()) null else result.first)
             }, { throwable ->
                 handleError(throwable) { loadInitial(params, callback) }
             })
@@ -52,7 +53,7 @@ open class GenericDataSource<Response, RV: RequestValues>(
         compositeDisposable.add(useCaseCall(params.key)
             .subscribe({ result ->
                 networkState.postValue(NetworkState.SUCCESS)
-                callback.onResult(result.second, result.first)
+                callback.onResult(result.second, if (result.first.nextPage.isNullOrEmpty()) null else result.first)
             }, { throwable ->
                 handleError(throwable) { loadAfter(params, callback) }
             })

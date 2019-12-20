@@ -12,9 +12,9 @@ interface PostsServiceAPI {
     @GET("{subreddit}/{type}.json?raw_json=1")
     fun getPagedListPosts(@Path("subreddit", encoded = true) subReddit: String? = null,
                           @Path("type") type: String? = null,
-                          @Query("after") nextPage: String = ""): Single<JsonGenericResponseWrapper<JsonGenericList<JsonPostResponse>>>
+                          @Query("after") nextPage: String? = null): Single<JsonGenericResponseWrapper<JsonGenericList<JsonPostResponse>>>
 
-    @GET("subreddits/mine/subscribers")
-    fun getPagedListMineSubscribers(
-                          @Query("limit") limit: Int = 100): Single<JsonGenericResponseWrapper<JsonGenericList<JsonSubcribersResponse>>>
+    @GET("subreddits/mine/subscriber")
+    fun getPagedListMineSubscribers(@Query("after") nextPage: String? = null,
+                          @Query("limit") limit: Int? = 100): Single<JsonGenericResponseWrapper<JsonGenericList<JsonSubcribersResponse>>>
 }

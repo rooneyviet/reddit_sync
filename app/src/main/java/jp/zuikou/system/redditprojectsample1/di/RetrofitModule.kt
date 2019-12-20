@@ -82,7 +82,7 @@ val retrofitModule = module {
                 chain.request().newBuilder()
                     .addHeader("Content-Type", "application/json; charset=UTF-8")
                     .addHeader("Accept", "application/json")
-                    .addHeader("Authorization", "bearer 112931652197-KTt7iOE5UxLLGxjxaTdDsNSzvQE")
+                    .addHeader("Authorization", "bearer 112931652197-3sYG54yXxTNPJ1O-YqXwFJzBU40")
                     .build()
             )
         }

@@ -7,5 +7,5 @@ import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 interface PostRepository {
     fun getPagedListPosts(subReddit: String? = null,
                           type: String? = null,
-                          page: String ): Single<Pair<Pagination, List<PostEntity>>>
+                          page: String?=null ): Single<Pair<Pagination, List<PostEntity>>>
 }

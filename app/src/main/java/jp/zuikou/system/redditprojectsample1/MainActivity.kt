@@ -3,9 +3,11 @@ package jp.zuikou.system.redditprojectsample1
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
@@ -14,14 +16,31 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.paging.PagedList
+import androidx.recyclerview.widget.LinearLayoutManager
+import jp.zuikou.system.redditprojectsample1.di.RetrofitObject
+import jp.zuikou.system.redditprojectsample1.domain.model.RSubSubcribersEntity
+import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
+import jp.zuikou.system.redditprojectsample1.presentation.navigation_drawer.DrawerLayoutPagedListAdapter
+import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class MainActivity : BaseAuthActivity() {
 
     private lateinit var appBarConfiguration : AppBarConfiguration
 
+    private val mainViewModel: MainViewModel by viewModel()
+
+    private val drawerPagedListAdapter: DrawerLayoutPagedListAdapter by inject{
+        parametersOf({subreddit: String -> subClicked(subreddit) }) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        getKoin().setProperty(RetrofitObject.RETROFIT_CHOOSE_NAMESPACE, RetrofitObject.RETROFIT_LOGGED_NAMESPACE)
         setContentView(R.layout.activity_main)
 
         val drawerLayout : DrawerLayout? = findViewById(R.id.drawerLayout)
@@ -49,6 +68,8 @@ class MainActivity : BaseAuthActivity() {
 
         setupActionBar(navController, appBarConfiguration)
 
+        //mainViewModel.refreshGetSubcribersList()
+
 
 
         navController.addOnDestinationChangedListener { nc: NavController, nd: NavDestination, bundle: Bundle? ->
@@ -59,7 +80,32 @@ class MainActivity : BaseAuthActivity() {
             }
         }
 
+        initAndObserveData()
+
         //Glide.with(this).load("http://goo.gl/gEgYUd").into(navHeaderImage);
+    }
+
+    private fun initAndObserveData(){
+        lst_menu_items_recyclerview.layoutManager = LinearLayoutManager(this)
+        lst_menu_items_recyclerview.adapter = drawerPagedListAdapter
+
+        mainViewModel.getSubcribersList().observe(this,
+            Observer<PagedList<RSubSubcribersEntity>> {
+                drawerPagedListAdapter.submitList(it)
+            })
+
+        mainViewModel.getNetworkStateList().observe(this,
+            Observer<NetworkState> {
+
+            })
+
+        //initSwipeToRefresh()
+
+        //postsViewModel.refresh()
+    }
+
+    private fun subClicked(subreddit: String) {
+        Toast.makeText(applicationContext, subreddit, Toast.LENGTH_LONG).show()
     }
 
     private fun setupActionBar(navController: NavController,

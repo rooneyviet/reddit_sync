@@ -7,6 +7,6 @@ import jp.zuikou.system.redditprojectsample1.domain.model.RSubSubcribersEntity
 
 class SubRedditsRepositoryImpl(val datasource: Datasource): SubRedditsRepository {
     override fun getPagedListMineSubscribers(nextPage: String?, limit: Int?): Single<Pair<Pagination, List<RSubSubcribersEntity>>> =
-        datasource.getPagedListMineSubscribers()
+        datasource.getPagedListMineSubscribers(nextPage = nextPage, limit =  limit)
 
 }

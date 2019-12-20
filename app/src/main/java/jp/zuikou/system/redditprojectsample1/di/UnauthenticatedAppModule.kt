@@ -18,7 +18,7 @@ import jp.zuikou.system.redditprojectsample1.domain.usecase.GetSubRedditsUseCase
 import jp.zuikou.system.redditprojectsample1.domain.usecase.UseCase
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.PostsDataSourceFactory
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.SubRedditsDataSourceFactory
-import jp.zuikou.system.redditprojectsample1.presentation.navigation_drawer.DrawerLayoutAdapter
+import jp.zuikou.system.redditprojectsample1.presentation.navigation_drawer.DrawerLayoutPagedListAdapter
 import jp.zuikou.system.redditprojectsample1.presentation.repository.PaginationRepository
 import jp.zuikou.system.redditprojectsample1.presentation.repository.PostRepositoryPresent
 import jp.zuikou.system.redditprojectsample1.presentation.repository.PostRepositoryPresentImpl
@@ -95,7 +95,7 @@ val mineSubcribersModule: Module = module {
     single { SubRedditsDataSourceFactory(get(named(USE_CASE_SUBSCRIBER))) }
 
     factory { (subClicked: (subreddit: String) -> Unit) ->
-        DrawerLayoutAdapter(subClicked)
+        DrawerLayoutPagedListAdapter(subClicked)
     }
 
 }

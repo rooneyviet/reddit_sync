@@ -1,6 +1,5 @@
 package jp.zuikou.system.redditprojectsample1.presentation.navigation_drawer
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +10,8 @@ import jp.zuikou.system.redditprojectsample1.R
 import jp.zuikou.system.redditprojectsample1.domain.model.RSubSubcribersEntity
 import kotlinx.android.synthetic.main.rrsubscriberslayout.view.*
 
-class DrawerLayoutAdapter(private val subClicked: (subreddit: String)-> Unit):
-    PagedListAdapter<RSubSubcribersEntity,DrawerLayoutAdapter.SubcribersDrawerViewHolder>(SubscribersDiffCallback) {
+class DrawerLayoutPagedListAdapter(private val subClicked: (subreddit: String)-> Unit):
+    PagedListAdapter<RSubSubcribersEntity,DrawerLayoutPagedListAdapter.SubcribersDrawerViewHolder>(SubscribersDiffCallback) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
