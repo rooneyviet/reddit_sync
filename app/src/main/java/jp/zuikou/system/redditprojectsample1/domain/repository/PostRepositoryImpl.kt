@@ -9,7 +9,7 @@ class PostRepositoryImpl(private val datasource: Datasource): PostRepository {
     override fun getPagedListPosts(
         subReddit: String?,
         type: String?,
-        page: String
+        page: String?
     ): Single<Pair<Pagination, List<PostEntity>>> =
         datasource.getPagedListPosts(subReddit, type, page)
 }
