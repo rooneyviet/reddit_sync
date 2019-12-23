@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimaryDark">#E2E2E2</color>
+    <color name="colorAccent">#FF0E77</color>
+    <color name="statusBarColor">#F30000</color>
+    <color name="navigationBarColor">#FFFFFF</color>
+    <color name="windowBackground">#DFDFDF</color>
+
+
+    <color name="actionBarTextColor">#161616</color>
+    <!--<color name="colorPrimaryVariant">#008577</color>
+    <color name="colorSecondary">#00574B</color>
+    <color name="colorSecondaryVariant">#D81B60</color>
+    <color name="colorOnSecondary">#008577</color>
+    <color name="colorError">#00574B</color>
+    <color name="colorOnError">#D81B60</color>
+    <color name="colorSurface">#008577</color>
+    <color name="colorOnSurface">#00574B</color>
+    <color name="colorOnBackground">#D81B60</color>
+    <color name="background">#FAFAFA</color>-->
 </resources>

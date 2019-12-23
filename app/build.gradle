@@ -123,4 +123,8 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
 
     implementation 'android.arch.paging:runtime:1.0.1'
+
+
+    // Google Material
+    implementation 'com.google.android.material:material:1.2.0-alpha03'
 }

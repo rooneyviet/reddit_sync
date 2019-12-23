@@ -53,6 +53,16 @@
 
             <include layout="@layout/nav_header" />
 
+
+            <include layout="@layout/profile_sidebar_layout" />
+
+            <View
+                android:id="@+id/viewDivider1"
+                style="@style/ViewDivider"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/lst_menu_items_recyclerview"
                 android:layout_width="match_parent"
