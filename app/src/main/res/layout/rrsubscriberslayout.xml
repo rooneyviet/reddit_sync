@@ -12,7 +12,6 @@
         android:layout_gravity="center"/>
 
     <TextView
-        android:textColor="@android:color/black"
         android:textSize="18sp"
         android:id="@+id/subcribersText"
         android:layout_width="wrap_content"

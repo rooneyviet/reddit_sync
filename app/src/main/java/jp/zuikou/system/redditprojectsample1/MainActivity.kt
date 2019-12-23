@@ -1,5 +1,6 @@
 package jp.zuikou.system.redditprojectsample1
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -18,16 +19,22 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.jakewharton.rxbinding2.widget.RxCompoundButton
 import jp.zuikou.system.redditprojectsample1.di.RetrofitObject
 import jp.zuikou.system.redditprojectsample1.domain.model.RSubSubcribersEntity
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
 import jp.zuikou.system.redditprojectsample1.presentation.navigation_drawer.DrawerLayoutPagedListAdapter
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
+import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
+import jp.zuikou.system.redditprojectsample1.util.ThemeHelper
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.profile_sidebar_layout.*
 import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 class MainActivity : BaseAuthActivity() {
 
@@ -69,6 +76,8 @@ class MainActivity : BaseAuthActivity() {
         setupActionBar(navController, appBarConfiguration)
 
         //mainViewModel.refreshGetSubcribersList()
+
+        setupNightMode()
 
 
 
@@ -147,6 +156,37 @@ class MainActivity : BaseAuthActivity() {
         return item.onNavDestinationSelected(findNavController(R.id.myNavHostFragment))
                 || super.onOptionsItemSelected(item)
         // TODO END STEP 9.2
+    }
+
+    @SuppressLint("CheckResult")
+    private fun setupNightMode(){
+        darkModeSwitchMaterial.isChecked = SharedPreferenceSingleton.getCurrentThemePref() == ThemeHelper.DARK_MODE
+
+        /*RxCompoundButton.checkedChanges(darkModeSwitchMaterial)
+            .throttleFirst(1, TimeUnit.SECONDS)
+            .subscribe {isChecked->
+                if(isChecked){
+                    SharedPreferenceSingleton.setCurrentThemePref(ThemeHelper.DARK_MODE)
+                    ThemeHelper.applyTheme(ThemeHelper.DARK_MODE)
+                } else {
+                    SharedPreferenceSingleton.setCurrentThemePref(ThemeHelper.LIGHT_MODE)
+                    ThemeHelper.applyTheme(ThemeHelper.LIGHT_MODE)
+                }
+                finish()
+                startActivity(intent)
+            }*/
+
+        darkModeSwitchMaterial.setOnCheckedChangeListener { compoundButton, isChecked ->
+
+            if(isChecked){
+                SharedPreferenceSingleton.setCurrentThemePref(ThemeHelper.DARK_MODE)
+                ThemeHelper.applyTheme(ThemeHelper.DARK_MODE)
+            } else {
+                SharedPreferenceSingleton.setCurrentThemePref(ThemeHelper.LIGHT_MODE)
+                ThemeHelper.applyTheme(ThemeHelper.LIGHT_MODE)
+            }
+
+        }
     }
 
 
