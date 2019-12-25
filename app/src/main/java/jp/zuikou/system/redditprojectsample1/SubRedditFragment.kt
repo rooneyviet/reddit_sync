@@ -12,10 +12,12 @@ import androidx.lifecycle.Observer
 import androidx.navigation.navOptions
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
+import jp.zuikou.system.redditprojectsample1.di.RetrofitObject
 import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
 import jp.zuikou.system.redditprojectsample1.presentation.ui.PostsPagedListAdapter
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.PostsViewModel
+import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import kotlinx.android.synthetic.main.fragment_sub_reddit.*
 import kotlinx.android.synthetic.main.include_posts_list.*
 import kotlinx.android.synthetic.main.list_item_network_state.*
@@ -25,6 +27,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.Koin
 import org.koin.core.context.GlobalContext
 import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.named
 import timber.log.Timber
 
 // TODO: Rename parameter arguments, choose names that match
@@ -70,6 +73,9 @@ class SubRedditFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         getKoin().setProperty(PROPERTY_PAGED_LIST, getPagedListConfig())
+        Timber.d("isaccesstokensaved ${SharedPreferenceSingleton.isAccessTokenSaved()}")
+
+        Timber.d("onCreateView")
         //GlobalContext.get().koin.setProperty(PROPERTY_PAGED_LIST, getPagedListConfig())
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_sub_reddit, container, false)
@@ -87,13 +93,16 @@ class SubRedditFragment : Fragment() {
             }
         }
 
+        initSwipeToRefresh()
+
         recyclerView.layoutManager = LinearLayoutManager(this.context)
         recyclerView.adapter = postsAdapter
 
-        postsViewModel.getPosts("r/popular","best").observe(this,
+        /*postsViewModel.getPosts("r/popular","best").observe(this,
             Observer<PagedList<PostEntity>> {
                 postsAdapter.submitList(it)
-            })
+            })*/
+        sdgnjgdlsn("r/popular", "best")
 
         postsViewModel.getNetworkState().observe(this,
             Observer<NetworkState> {
@@ -106,16 +115,39 @@ class SubRedditFragment : Fragment() {
 
         //initSwipeToRefresh()
 
-        postsViewModel.refresh()
-
+        //refreshList()
+        //SharedPreferenceSingleton.setAccessToken(null)
     }
+
+    public fun refreshList(){
+        //SharedPreferenceSingleton.setAccessToken(null)
+        Timber.d("HELLLLLLLLLLLLLOOOOOOO")
+        //getKoin().setProperty(RetrofitObject.RETROFIT_CHOOSE_NAMESPACE, RetrofitObject.RETROFIT_LOGGED_NAMESPACE)
+        //postsViewModel.refresh()
+
+        sdgnjgdlsn("r/aww", "best")
+    }
+
 
 
     private fun initSwipeToRefresh() {
         swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.colorAccent))
         swipeRefreshLayout.setOnRefreshListener {
-            postsViewModel.refresh()
+            //postsViewModel.refresh()
+
+            sdgnjgdlsn("r/aww", "best")
         }
+
+        val scope = getKoin().createScope("myScope1", named("myScope1"))
+        scope.close()
+    }
+
+    private fun sdgnjgdlsn(subreddit: String? = null, type: String? = null){
+        postsViewModel.getPosts(subreddit,type).observe(this,
+            Observer<PagedList<PostEntity>> {
+                swipeRefreshLayout.isRefreshing = false
+                postsAdapter.submitList(it)
+            })
     }
 
     private fun getPagedListConfig() =
@@ -189,7 +221,7 @@ class SubRedditFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(param1: String? = null, param2: String? = null) =
             SubRedditFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)

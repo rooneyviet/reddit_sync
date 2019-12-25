@@ -4,14 +4,13 @@ import android.widget.ImageView
 import jp.zuikou.system.redditprojectsample1.SubRedditFragment.Companion.PROPERTY_PAGED_LIST
 import jp.zuikou.system.redditprojectsample1.data.datasource.Datasource
 import jp.zuikou.system.redditprojectsample1.data.datasource.DatasourceImpl
+import jp.zuikou.system.redditprojectsample1.data.datasource.LoginDatasource
+import jp.zuikou.system.redditprojectsample1.data.datasource.LoginDatasourceImpl
 import jp.zuikou.system.redditprojectsample1.data.service.PostsServiceAPI
 import jp.zuikou.system.redditprojectsample1.domain.Pagination
 import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.domain.model.RSubSubcribersEntity
-import jp.zuikou.system.redditprojectsample1.domain.repository.PostRepository
-import jp.zuikou.system.redditprojectsample1.domain.repository.PostRepositoryImpl
-import jp.zuikou.system.redditprojectsample1.domain.repository.SubRedditsRepository
-import jp.zuikou.system.redditprojectsample1.domain.repository.SubRedditsRepositoryImpl
+import jp.zuikou.system.redditprojectsample1.domain.repository.*
 import jp.zuikou.system.redditprojectsample1.domain.requestvalue.GetPostsRequestValue
 import jp.zuikou.system.redditprojectsample1.domain.usecase.GetPostByCommunityUseCase
 import jp.zuikou.system.redditprojectsample1.domain.usecase.GetSubRedditsUseCase
@@ -42,7 +41,8 @@ private val loadFeature by lazy {
             repositoryModule,
             postsModule,
             retrofitModule,
-            mineSubcribersModule
+            mineSubcribersModule,
+            accessTokenLoginModule
         )
     )
 }
@@ -98,6 +98,13 @@ val mineSubcribersModule: Module = module {
         DrawerLayoutPagedListAdapter(subClicked)
     }
 
+}
+
+
+val accessTokenLoginModule: Module = module {
+    //single<Datasource> { DatasourceImpl(get()) }
+    single<LoginDatasource> { LoginDatasourceImpl(get()) }
+    single<LoginRepository> { LoginRepositoryImpl(get()) }
 }
 
 private const val USE_CASE_POST = "useCasePost"

@@ -1,6 +1,8 @@
 package jp.zuikou.system.redditprojectsample1
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -19,7 +21,7 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.jakewharton.rxbinding2.widget.RxCompoundButton
+import jp.zuikou.system.redditprojectsample1.config.AppConfig
 import jp.zuikou.system.redditprojectsample1.di.RetrofitObject
 import jp.zuikou.system.redditprojectsample1.domain.model.RSubSubcribersEntity
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
@@ -34,7 +36,20 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
+import android.net.Uri
+import androidx.core.content.ContextCompat
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import jp.zuikou.system.redditprojectsample1.config.AppConfig.AUTH_URL
+import jp.zuikou.system.redditprojectsample1.config.AppConfig.CLIENT_ID
+import jp.zuikou.system.redditprojectsample1.config.AppConfig.REDIRECT_URI
+import jp.zuikou.system.redditprojectsample1.config.AppConfig.SCOPE
+import jp.zuikou.system.redditprojectsample1.config.AppConfig.STATE
+import jp.zuikou.system.redditprojectsample1.di.retrofitModule
+import jp.zuikou.system.redditprojectsample1.domain.repository.LoginRepository
+import kotlinx.android.synthetic.main.fragment_sub_reddit.*
+import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
 
 class MainActivity : BaseAuthActivity() {
 
@@ -45,9 +60,22 @@ class MainActivity : BaseAuthActivity() {
     private val drawerPagedListAdapter: DrawerLayoutPagedListAdapter by inject{
         parametersOf({subreddit: String -> subClicked(subreddit) }) }
 
+
+    private val loginRepository by inject<LoginRepository>()
+
+    companion object {
+        val REQUEST_CODE_LOGIN = 754
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        getKoin().setProperty(RetrofitObject.RETROFIT_CHOOSE_NAMESPACE, RetrofitObject.RETROFIT_LOGGED_NAMESPACE)
+        Timber.d("isaccesstokensaved ${SharedPreferenceSingleton.isAccessTokenSaved()}")
+        if(SharedPreferenceSingleton.isAccessTokenSaved()){
+            getKoin().setProperty(RetrofitObject.RETROFIT_CHOOSE_NAMESPACE, RetrofitObject.RETROFIT_LOGGED_NAMESPACE)
+        } else {
+            getKoin().setProperty(RetrofitObject.RETROFIT_CHOOSE_NAMESPACE, RetrofitObject.RETROFIT_NOT_LOGGED_NAMESPACE)
+        }
+        //loadKoinModules(retrofitModule)
         setContentView(R.layout.activity_main)
 
         val drawerLayout : DrawerLayout? = findViewById(R.id.drawerLayout)
@@ -90,6 +118,12 @@ class MainActivity : BaseAuthActivity() {
         }
 
         initAndObserveData()
+
+        loginLayout.setOnClickListener {
+            val url = String.format(AUTH_URL, CLIENT_ID, STATE, REDIRECT_URI, SCOPE)
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivityForResult(intent, REQUEST_CODE_LOGIN)
+        }
 
         //Glide.with(this).load("http://goo.gl/gEgYUd").into(navHeaderImage);
     }
@@ -189,5 +223,52 @@ class MainActivity : BaseAuthActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (intent != null && intent.action == Intent.ACTION_VIEW) {
+            val uri = intent.data
+            if (uri!!.getQueryParameter("error") != null) {
+                val error = uri.getQueryParameter("error")
+                Timber.e( "An error has occurred : $error")
+            } else {
+                val state = uri.getQueryParameter("state")
+                if (state == STATE) {
+                    val code = uri.getQueryParameter("code")
+                    //getAccessToken(code)
+                    getAccessToken(code)
+                }
+            }
+        }
+    }
+
+
+    @SuppressLint("CheckResult")
+    private fun getAccessToken(code: String?){
+        loginRepository.getAccessToken(code)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                SharedPreferenceSingleton.setAccessToken(it.accessToken)
+
+                val host: NavHostFragment = supportFragmentManager
+                    .findFragmentById(R.id.myNavHostFragment) as NavHostFragment
+
+                val childFragments = host.childFragmentManager.fragments
+                childFragments.forEach { fragment ->
+                    if (fragment is SubRedditFragment) {
+                        unloadKoinModules(retrofitModule)
+                        loadKoinModules(retrofitModule)
+                        fragment.refreshList()
+                        /*finish()
+                        startActivity(intent)*/
+                        /*host.childFragmentManager.beginTransaction()
+                            .replace(R.id.myNavHostFragment, SubRedditFragment.newInstance())*/
+                    }
+                }
+
+            },{
+
+            })
+    }
 
 }

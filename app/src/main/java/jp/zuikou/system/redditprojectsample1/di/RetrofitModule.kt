@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder
 import jp.zuikou.system.redditprojectsample1.BuildConfig
 import jp.zuikou.system.redditprojectsample1.BuildConfig.DEBUG
 import jp.zuikou.system.redditprojectsample1.config.AppConfig
+import jp.zuikou.system.redditprojectsample1.data.service.LoginServiceAPI
 import jp.zuikou.system.redditprojectsample1.data.service.PostsServiceAPI
 import jp.zuikou.system.redditprojectsample1.di.RetrofitObject.API_REQUEST_HEADER_AUTHEN_INTERCEPTOR
 import jp.zuikou.system.redditprojectsample1.di.RetrofitObject.API_REQUEST_HEADER_UNAUTHEN_INTERCEPTOR
@@ -14,6 +15,7 @@ import jp.zuikou.system.redditprojectsample1.di.RetrofitObject.OKHTTP_CLIENT_UNA
 import jp.zuikou.system.redditprojectsample1.di.RetrofitObject.RETROFIT_CHOOSE_NAMESPACE
 import jp.zuikou.system.redditprojectsample1.di.RetrofitObject.RETROFIT_LOGGED_NAMESPACE
 import jp.zuikou.system.redditprojectsample1.di.RetrofitObject.RETROFIT_NOT_LOGGED_NAMESPACE
+import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -82,7 +84,7 @@ val retrofitModule = module {
                 chain.request().newBuilder()
                     .addHeader("Content-Type", "application/json; charset=UTF-8")
                     .addHeader("Accept", "application/json")
-                    .addHeader("Authorization", "bearer 112931652197-JYNPD1cS3G77_KoJxAP0TmUHf5E")
+                    .addHeader("Authorization", "bearer ${SharedPreferenceSingleton.getAccessToken()}")
                     .build()
             )
         }
@@ -99,7 +101,7 @@ val retrofitModule = module {
         }
     }
 
-    single<Retrofit>(named(RETROFIT_LOGGED_NAMESPACE)) {
+    factory<Retrofit>(named(RETROFIT_LOGGED_NAMESPACE)) {
         Retrofit.Builder()
             .client(get(named(OKHTTP_CLIENT_AUTHEN_NAMESPACE)))
             .addCallAdapterFactory(get<RxJava2CallAdapterFactory>())
@@ -108,7 +110,7 @@ val retrofitModule = module {
             .build()
     }
 
-    single<Retrofit>(named(RETROFIT_NOT_LOGGED_NAMESPACE)) {
+    factory<Retrofit>(named(RETROFIT_NOT_LOGGED_NAMESPACE)) {
         Retrofit.Builder()
             .client(get(named(OKHTTP_CLIENT_UNAUTHEN_NAMESPACE)))
             .addCallAdapterFactory(get<RxJava2CallAdapterFactory>())
@@ -118,20 +120,22 @@ val retrofitModule = module {
     }
 
 
-    single<PostsServiceAPI> {
+    factory<PostsServiceAPI> {
         providePostService(
-            get<Retrofit>(
-                named(
-                    getProperty(
-                        RETROFIT_CHOOSE_NAMESPACE,
-                        RETROFIT_NOT_LOGGED_NAMESPACE
-                    )
-                )
+            get<Retrofit>(named(getProperty(RETROFIT_CHOOSE_NAMESPACE))
             )
         )
+    }
+
+    single<LoginServiceAPI> {
+        provideGetAccessTokenService(get<Retrofit>(named(RETROFIT_NOT_LOGGED_NAMESPACE)))
     }
 
 }
 
 private fun providePostService(retrofit: Retrofit): PostsServiceAPI =
     retrofit.create(PostsServiceAPI::class.java)
+
+
+private fun provideGetAccessTokenService(retrofit: Retrofit): LoginServiceAPI =
+    retrofit.create(LoginServiceAPI::class.java)
