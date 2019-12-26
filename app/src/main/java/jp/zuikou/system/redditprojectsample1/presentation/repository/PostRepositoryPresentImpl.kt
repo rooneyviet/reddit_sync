@@ -1,6 +1,7 @@
 package jp.zuikou.system.redditprojectsample1.presentation.repository
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
@@ -17,7 +18,7 @@ class PostRepositoryPresentImpl(
     private var factory: PostsDataSourceFactory,
     private val pagedListConfig: PagedList.Config): PostRepositoryPresent {//private val pagedListConfig: PagedList.Config
 
-    private var posts: LiveData<PagedList<PostEntity>> by Delegates.notNull()
+    private var posts: LiveData<PagedList<PostEntity>> = MutableLiveData<PagedList<PostEntity>>()
 
     private fun getPagedListConfig() =
         PagedList.Config.Builder()
@@ -25,10 +26,10 @@ class PostRepositoryPresentImpl(
             .setEnablePlaceholders(false)
             .build()
 
-    /*init {
+    init {
         //resetList()
         initLivePagedBuilder()
-    }*/
+    }
 
     override fun getList(subReddit: String?, type: String?): LiveData<PagedList<PostEntity>> {
         //factory = GlobalContext.get().koin.get()

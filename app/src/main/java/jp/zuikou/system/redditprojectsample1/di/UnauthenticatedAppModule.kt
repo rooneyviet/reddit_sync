@@ -25,6 +25,7 @@ import jp.zuikou.system.redditprojectsample1.presentation.repository.SubcribersR
 import jp.zuikou.system.redditprojectsample1.presentation.ui.PostsPagedListAdapter
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.PostsViewModel
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
@@ -61,22 +62,22 @@ val repositoryModule = module {
 }
 
 val postsModule: Module = module {
-    single<Datasource> { DatasourceImpl(get()) }
-    single { PostsViewModel(get()) }
-    single<PostRepositoryPresent> {
+    factory<Datasource> { DatasourceImpl(get()) }
+    viewModel { PostsViewModel(get()) }
+    factory<PostRepositoryPresent> {
         PostRepositoryPresentImpl(
             get(),
             getProperty(PROPERTY_PAGED_LIST)
         )
     }
-    single<PostRepository> { PostRepositoryImpl(get()) }
-    single<UseCase<GetPostsRequestValue, Pair<Pagination, List<PostEntity>>>>(named(USE_CASE_POST)) {
+    factory<PostRepository> { PostRepositoryImpl(get()) }
+    factory<UseCase<GetPostsRequestValue, Pair<Pagination, List<PostEntity>>>>(named(USE_CASE_POST)) {
         GetPostByCommunityUseCase(
             get()
         )
     }
 
-    single { PostsDataSourceFactory(get(named(USE_CASE_POST))) }
+    factory { PostsDataSourceFactory(get(named(USE_CASE_POST))) }
 
     factory { (retryCallback: () -> Unit,
                   clickItem: (post: PostEntity, image: ImageView) -> Unit) ->

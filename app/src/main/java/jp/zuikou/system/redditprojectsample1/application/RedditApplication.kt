@@ -21,12 +21,7 @@ class RedditApplication: Application() {
             ThemeHelper.applyTheme(currentThemePrefString)
         }
 
-        startKoin {
-            androidContext(this@RedditApplication)
-            androidFileProperties()
-            injectBasicFeature()
-            //injectLoggedInFeatures()
-        }
+        RedditApplication.startKoinInApp(this@RedditApplication)
 
 
 
@@ -36,4 +31,15 @@ class RedditApplication: Application() {
 
         JodaTimeAndroid.init(this)
     }
+    companion object{
+        fun startKoinInApp(application: Application){
+            startKoin {
+                androidContext(application)
+                androidFileProperties()
+                injectBasicFeature()
+                //injectLoggedInFeatures()
+            }
+        }
+    }
+
 }

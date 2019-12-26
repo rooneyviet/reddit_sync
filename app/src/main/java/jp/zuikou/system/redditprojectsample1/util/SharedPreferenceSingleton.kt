@@ -2,6 +2,7 @@ package jp.zuikou.system.redditprojectsample1.util
 
 import android.content.Context
 import android.content.SharedPreferences
+import jp.zuikou.system.redditprojectsample1.di.RetrofitObject
 
 object SharedPreferenceSingleton {
     lateinit var pref: SharedPreferences
@@ -24,6 +25,8 @@ object SharedPreferenceSingleton {
 
     fun isAccessTokenSaved(): Boolean =
         getAccessToken() != null
+
+    fun getRetrofitNameSpace(): String = if (isAccessTokenSaved()) RetrofitObject.RETROFIT_LOGGED_NAMESPACE else RetrofitObject.RETROFIT_NOT_LOGGED_NAMESPACE
 
 
     @JvmStatic

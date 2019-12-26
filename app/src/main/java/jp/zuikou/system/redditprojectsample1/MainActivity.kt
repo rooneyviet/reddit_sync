@@ -1,8 +1,8 @@
 package jp.zuikou.system.redditprojectsample1
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -21,23 +21,6 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
-import jp.zuikou.system.redditprojectsample1.config.AppConfig
-import jp.zuikou.system.redditprojectsample1.di.RetrofitObject
-import jp.zuikou.system.redditprojectsample1.domain.model.RSubSubcribersEntity
-import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
-import jp.zuikou.system.redditprojectsample1.presentation.navigation_drawer.DrawerLayoutPagedListAdapter
-import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
-import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
-import jp.zuikou.system.redditprojectsample1.util.ThemeHelper
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.profile_sidebar_layout.*
-import org.koin.android.ext.android.getKoin
-import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
-import timber.log.Timber
-import android.net.Uri
-import androidx.core.content.ContextCompat
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import jp.zuikou.system.redditprojectsample1.config.AppConfig.AUTH_URL
@@ -45,11 +28,19 @@ import jp.zuikou.system.redditprojectsample1.config.AppConfig.CLIENT_ID
 import jp.zuikou.system.redditprojectsample1.config.AppConfig.REDIRECT_URI
 import jp.zuikou.system.redditprojectsample1.config.AppConfig.SCOPE
 import jp.zuikou.system.redditprojectsample1.config.AppConfig.STATE
-import jp.zuikou.system.redditprojectsample1.di.retrofitModule
+import jp.zuikou.system.redditprojectsample1.domain.model.RSubSubcribersEntity
 import jp.zuikou.system.redditprojectsample1.domain.repository.LoginRepository
-import kotlinx.android.synthetic.main.fragment_sub_reddit.*
-import org.koin.core.context.loadKoinModules
-import org.koin.core.context.unloadKoinModules
+import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
+import jp.zuikou.system.redditprojectsample1.presentation.navigation_drawer.DrawerLayoutPagedListAdapter
+import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
+import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
+import jp.zuikou.system.redditprojectsample1.util.ThemeHelper
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.profile_sidebar_layout.*
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
+import timber.log.Timber
 
 class MainActivity : BaseAuthActivity() {
 
@@ -70,12 +61,6 @@ class MainActivity : BaseAuthActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.d("isaccesstokensaved ${SharedPreferenceSingleton.isAccessTokenSaved()}")
-        if(SharedPreferenceSingleton.isAccessTokenSaved()){
-            getKoin().setProperty(RetrofitObject.RETROFIT_CHOOSE_NAMESPACE, RetrofitObject.RETROFIT_LOGGED_NAMESPACE)
-        } else {
-            getKoin().setProperty(RetrofitObject.RETROFIT_CHOOSE_NAMESPACE, RetrofitObject.RETROFIT_NOT_LOGGED_NAMESPACE)
-        }
-        //loadKoinModules(retrofitModule)
         setContentView(R.layout.activity_main)
 
         val drawerLayout : DrawerLayout? = findViewById(R.id.drawerLayout)
@@ -125,7 +110,6 @@ class MainActivity : BaseAuthActivity() {
             startActivityForResult(intent, REQUEST_CODE_LOGIN)
         }
 
-        //Glide.with(this).load("http://goo.gl/gEgYUd").into(navHeaderImage);
     }
 
     private fun initAndObserveData(){
@@ -196,20 +180,6 @@ class MainActivity : BaseAuthActivity() {
     private fun setupNightMode(){
         darkModeSwitchMaterial.isChecked = SharedPreferenceSingleton.getCurrentThemePref() == ThemeHelper.DARK_MODE
 
-        /*RxCompoundButton.checkedChanges(darkModeSwitchMaterial)
-            .throttleFirst(1, TimeUnit.SECONDS)
-            .subscribe {isChecked->
-                if(isChecked){
-                    SharedPreferenceSingleton.setCurrentThemePref(ThemeHelper.DARK_MODE)
-                    ThemeHelper.applyTheme(ThemeHelper.DARK_MODE)
-                } else {
-                    SharedPreferenceSingleton.setCurrentThemePref(ThemeHelper.LIGHT_MODE)
-                    ThemeHelper.applyTheme(ThemeHelper.LIGHT_MODE)
-                }
-                finish()
-                startActivity(intent)
-            }*/
-
         darkModeSwitchMaterial.setOnCheckedChangeListener { compoundButton, isChecked ->
 
             if(isChecked){
@@ -255,14 +225,11 @@ class MainActivity : BaseAuthActivity() {
 
                 val childFragments = host.childFragmentManager.fragments
                 childFragments.forEach { fragment ->
-                    if (fragment is SubRedditFragment) {
-                        unloadKoinModules(retrofitModule)
-                        loadKoinModules(retrofitModule)
+                    if (fragment is SubRedditFragment && fragment.isVisible) {
+                        /*unloadKoinModules(listOf(postsModule, retrofitModule))
+                        stopKoin()
+                        RedditApplication.startKoinInApp(application)*/
                         fragment.refreshList()
-                        /*finish()
-                        startActivity(intent)*/
-                        /*host.childFragmentManager.beginTransaction()
-                            .replace(R.id.myNavHostFragment, SubRedditFragment.newInstance())*/
                     }
                 }
 

@@ -71,14 +71,14 @@ val retrofitModule = module {
             .build()
     }
 
-    single<Interceptor>(named(HTTP_LOG_INTERCEPTOR)) {
+    factory<Interceptor>(named(HTTP_LOG_INTERCEPTOR)) {
         val logger = HttpLoggingInterceptor()
         logger.level = if (DEBUG)
             HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
         logger
     }
 
-    factory<Interceptor>(named(API_REQUEST_HEADER_AUTHEN_INTERCEPTOR)) {
+    single<Interceptor>(named(API_REQUEST_HEADER_AUTHEN_INTERCEPTOR)) {
         Interceptor { chain ->
             chain.proceed(
                 chain.request().newBuilder()
@@ -90,7 +90,7 @@ val retrofitModule = module {
         }
     }
 
-    factory<Interceptor>(named(API_REQUEST_HEADER_UNAUTHEN_INTERCEPTOR)) {
+    single<Interceptor>(named(API_REQUEST_HEADER_UNAUTHEN_INTERCEPTOR)) {
         Interceptor { chain ->
             chain.proceed(
                 chain.request().newBuilder()
@@ -101,7 +101,31 @@ val retrofitModule = module {
         }
     }
 
-    factory<Retrofit>(named(RETROFIT_LOGGED_NAMESPACE)) {
+    /*factory<Retrofit> {
+        if(SharedPreferenceSingleton.isAccessTokenSaved()) {
+            Retrofit.Builder()
+                .client(get(named(OKHTTP_CLIENT_AUTHEN_NAMESPACE)))
+                .addCallAdapterFactory(get<RxJava2CallAdapterFactory>())
+                .addConverterFactory(get<GsonConverterFactory>())
+                .baseUrl(AppConfig.AUTHENTICATED_BASE_URL)
+                .build()
+        } else  Retrofit.Builder()
+        .client(get(named(OKHTTP_CLIENT_UNAUTHEN_NAMESPACE)))
+        .addCallAdapterFactory(get<RxJava2CallAdapterFactory>())
+        .addConverterFactory(get<GsonConverterFactory>())
+        .baseUrl(AppConfig.UNAUTHENTICATED_BASE_URL)
+        .build()
+    }
+
+    factory<PostsServiceAPI> {
+        providePostService(get<Retrofit>())
+    }
+
+    single<LoginServiceAPI> {
+        provideGetAccessTokenService(get<Retrofit>())
+    }*/
+
+    single<Retrofit>(named(RETROFIT_LOGGED_NAMESPACE)) {
         Retrofit.Builder()
             .client(get(named(OKHTTP_CLIENT_AUTHEN_NAMESPACE)))
             .addCallAdapterFactory(get<RxJava2CallAdapterFactory>())
@@ -110,7 +134,7 @@ val retrofitModule = module {
             .build()
     }
 
-    factory<Retrofit>(named(RETROFIT_NOT_LOGGED_NAMESPACE)) {
+    single<Retrofit>(named(RETROFIT_NOT_LOGGED_NAMESPACE)) {
         Retrofit.Builder()
             .client(get(named(OKHTTP_CLIENT_UNAUTHEN_NAMESPACE)))
             .addCallAdapterFactory(get<RxJava2CallAdapterFactory>())
@@ -122,7 +146,7 @@ val retrofitModule = module {
 
     factory<PostsServiceAPI> {
         providePostService(
-            get<Retrofit>(named(getProperty(RETROFIT_CHOOSE_NAMESPACE))
+            get<Retrofit>(named(SharedPreferenceSingleton.getRetrofitNameSpace())
             )
         )
     }

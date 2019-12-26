@@ -120,12 +120,7 @@ class SubRedditFragment : Fragment() {
     }
 
     public fun refreshList(){
-        //SharedPreferenceSingleton.setAccessToken(null)
-        Timber.d("HELLLLLLLLLLLLLOOOOOOO")
-        //getKoin().setProperty(RetrofitObject.RETROFIT_CHOOSE_NAMESPACE, RetrofitObject.RETROFIT_LOGGED_NAMESPACE)
-        //postsViewModel.refresh()
-
-        sdgnjgdlsn("r/aww", "best")
+        sdgnjgdlsn("r/popular", "best", true)
     }
 
 
@@ -135,15 +130,13 @@ class SubRedditFragment : Fragment() {
         swipeRefreshLayout.setOnRefreshListener {
             //postsViewModel.refresh()
 
-            sdgnjgdlsn("r/aww", "best")
+            sdgnjgdlsn("r/popular", "best")
         }
 
-        val scope = getKoin().createScope("myScope1", named("myScope1"))
-        scope.close()
     }
 
-    private fun sdgnjgdlsn(subreddit: String? = null, type: String? = null){
-        postsViewModel.getPosts(subreddit,type).observe(this,
+    private fun sdgnjgdlsn(subreddit: String? = null, type: String? = null, isReset: Boolean = false){
+        postsViewModel.getPosts(subreddit,type, isReset).observe(this,
             Observer<PagedList<PostEntity>> {
                 swipeRefreshLayout.isRefreshing = false
                 postsAdapter.submitList(it)

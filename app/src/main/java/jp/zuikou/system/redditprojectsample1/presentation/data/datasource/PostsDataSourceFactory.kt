@@ -15,7 +15,7 @@ class PostsDataSourceFactory(private val getPostBySubReddit:
 )
     : DataSource.Factory<Pagination, PostEntity>() {
 
-    var compositeDisposable: CompositeDisposable by Delegates.notNull()
+    var compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     val dataSource = MutableLiveData<PostsDataSource>()
 
