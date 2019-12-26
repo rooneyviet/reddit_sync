@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import jp.zuikou.system.redditprojectsample1.R
 
 fun View.gone() {
     visibility = View.GONE
@@ -21,6 +22,7 @@ fun View.visible() {
 fun ImageView.loadImage(imageUrl: String){
     Glide.with(this.context)
         .load(imageUrl)
+        .placeholder(R.drawable.q19mlyz4ks641)
         .into(this)
 }
 
@@ -34,11 +36,13 @@ fun ImageView.loadImageCircle(imageUrl: String){
 fun ImageView.loadImage(imageUri: Uri){
     Glide.with(this.context)
         .load(imageUri)
+        .placeholder(R.drawable.q19mlyz4ks641)
         .into(this)
 }
 
 fun ImageView.loadImage(resId: Int){
     Glide.with(this.context)
         .load(resId)
+        .placeholder(R.drawable.q19mlyz4ks641)
         .into(this)
 }

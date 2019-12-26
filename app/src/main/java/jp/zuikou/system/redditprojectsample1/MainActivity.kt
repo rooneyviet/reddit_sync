@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -63,12 +64,26 @@ class MainActivity : BaseAuthActivity() {
         Timber.d("isaccesstokensaved ${SharedPreferenceSingleton.isAccessTokenSaved()}")
         setContentView(R.layout.activity_main)
 
+        setupNavigation()
+        setupNightMode()
+        initAndObserveData()
+        setupDrawerAction()
+    }
+
+    private fun setupDrawerAction(){
+        loginLayout.setOnClickListener {
+            val url = String.format(AUTH_URL, CLIENT_ID, STATE, REDIRECT_URI, SCOPE)
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivityForResult(intent, REQUEST_CODE_LOGIN)
+        }
+    }
+
+
+    private fun setupNavigation(){
         val drawerLayout : DrawerLayout? = findViewById(R.id.drawerLayout)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar_main)
         setSupportActionBar(toolbar)
-
-        //val drawerLayout : DrawerLayout? = findViewById(R.id.drawerLayout)
 
         val host: NavHostFragment = supportFragmentManager
             .findFragmentById(R.id.myNavHostFragment) as NavHostFragment? ?: return
@@ -87,13 +102,6 @@ class MainActivity : BaseAuthActivity() {
         // TODO END STEP 9.5
 
         setupActionBar(navController, appBarConfiguration)
-
-        //mainViewModel.refreshGetSubcribersList()
-
-        setupNightMode()
-
-
-
         navController.addOnDestinationChangedListener { nc: NavController, nd: NavDestination, bundle: Bundle? ->
             if (nd.id == nc.graph.startDestination) {
                 drawerLayout?.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
@@ -101,15 +109,6 @@ class MainActivity : BaseAuthActivity() {
                 drawerLayout?.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             }
         }
-
-        initAndObserveData()
-
-        loginLayout.setOnClickListener {
-            val url = String.format(AUTH_URL, CLIENT_ID, STATE, REDIRECT_URI, SCOPE)
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            startActivityForResult(intent, REQUEST_CODE_LOGIN)
-        }
-
     }
 
     private fun initAndObserveData(){
@@ -126,21 +125,28 @@ class MainActivity : BaseAuthActivity() {
 
             })
 
-        //initSwipeToRefresh()
-
-        //postsViewModel.refresh()
+        subClicked()
     }
 
-    private fun subClicked(subreddit: String) {
-        Toast.makeText(applicationContext, subreddit, Toast.LENGTH_LONG).show()
+    private fun subClicked(subreddit: String = "") {
+        val host: NavHostFragment = supportFragmentManager
+            .findFragmentById(R.id.myNavHostFragment) as NavHostFragment
+
+        val childFragments = host.childFragmentManager.fragments
+        childFragments.forEach { fragment ->
+            if (fragment is SubRedditFragment && fragment.isVisible) {
+                fragment.observePostData(subreddit)
+            }
+        }
+
+        if(drawerLayout.isDrawerOpen(Gravity.LEFT)){
+            drawerLayout.closeDrawer(Gravity.LEFT);
+        }
     }
+
 
     private fun setupActionBar(navController: NavController,
                                appBarConfig : AppBarConfiguration) {
-        // TODO STEP 9.6 - Have NavigationUI handle what your ActionBar displays
-//        // This allows NavigationUI to decide what label to show in the action bar
-//        // By using appBarConfig, it will also determine whether to
-//        // show the up arrow or drawer menu icon
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfig)
         setupActionBarWithNavController(navController, appBarConfig)
     }
@@ -179,9 +185,7 @@ class MainActivity : BaseAuthActivity() {
     @SuppressLint("CheckResult")
     private fun setupNightMode(){
         darkModeSwitchMaterial.isChecked = SharedPreferenceSingleton.getCurrentThemePref() == ThemeHelper.DARK_MODE
-
         darkModeSwitchMaterial.setOnCheckedChangeListener { compoundButton, isChecked ->
-
             if(isChecked){
                 SharedPreferenceSingleton.setCurrentThemePref(ThemeHelper.DARK_MODE)
                 ThemeHelper.applyTheme(ThemeHelper.DARK_MODE)
@@ -189,7 +193,6 @@ class MainActivity : BaseAuthActivity() {
                 SharedPreferenceSingleton.setCurrentThemePref(ThemeHelper.LIGHT_MODE)
                 ThemeHelper.applyTheme(ThemeHelper.LIGHT_MODE)
             }
-
         }
     }
 
@@ -229,12 +232,11 @@ class MainActivity : BaseAuthActivity() {
                         /*unloadKoinModules(listOf(postsModule, retrofitModule))
                         stopKoin()
                         RedditApplication.startKoinInApp(application)*/
-                        fragment.refreshList()
+                        fragment.observePostData(isReset = true)
                     }
                 }
 
             },{
-
             })
     }
 

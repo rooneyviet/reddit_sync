@@ -9,13 +9,18 @@ import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.navOptions
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import jp.zuikou.system.redditprojectsample1.di.RetrofitObject
 import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
+import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditSortByDayEnum
+import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditTypeEnum
 import jp.zuikou.system.redditprojectsample1.presentation.ui.PostsPagedListAdapter
+import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.PostsViewModel
 import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import kotlinx.android.synthetic.main.fragment_sub_reddit.*
@@ -51,6 +56,8 @@ class SubRedditFragment : Fragment() {
 
     private val postsViewModel: PostsViewModel by viewModel()
 
+    private lateinit var shareMainViewModel: MainViewModel
+
     //private lateinit var mAdapter2: PostsPagedListAdapter
 
 
@@ -72,10 +79,10 @@ class SubRedditFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        activity?.let {
+            shareMainViewModel = ViewModelProviders.of(it).get(MainViewModel::class.java)
+        }
         getKoin().setProperty(PROPERTY_PAGED_LIST, getPagedListConfig())
-        Timber.d("isaccesstokensaved ${SharedPreferenceSingleton.isAccessTokenSaved()}")
-
-        Timber.d("onCreateView")
         //GlobalContext.get().koin.setProperty(PROPERTY_PAGED_LIST, getPagedListConfig())
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_sub_reddit, container, false)
@@ -98,12 +105,20 @@ class SubRedditFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(this.context)
         recyclerView.adapter = postsAdapter
 
-        /*postsViewModel.getPosts("r/popular","best").observe(this,
-            Observer<PagedList<PostEntity>> {
-                postsAdapter.submitList(it)
-            })*/
-        sdgnjgdlsn("r/popular", "best")
+        observerNetworkState()
 
+        observePostData()
+
+        postsAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                if (positionStart == 0) {
+                    recyclerView.scrollToPosition(0)
+                }
+            }
+        })
+    }
+
+    private fun observerNetworkState(){
         postsViewModel.getNetworkState().observe(this,
             Observer<NetworkState> {
                 if (postsAdapter.currentList.isNullOrEmpty() || swipeRefreshLayout.isRefreshing){
@@ -112,15 +127,18 @@ class SubRedditFragment : Fragment() {
                     postsAdapter.setNetworkState(it)
                 }
             })
-
-        //initSwipeToRefresh()
-
-        //refreshList()
-        //SharedPreferenceSingleton.setAccessToken(null)
     }
 
-    public fun refreshList(){
-        sdgnjgdlsn("r/popular", "best", true)
+    fun observePostData(subreddit: String? = shareMainViewModel.currentSubRedditRequestValue.subReddit,
+                        type: SubRedditTypeEnum? = shareMainViewModel.currentSubRedditRequestValue.subType,
+                        subRedditSortByDayEnum: SubRedditSortByDayEnum? = null,
+                        isReset: Boolean = false) {
+        shareMainViewModel.saveCurrentSubCurrentRequest(subreddit, type, subRedditSortByDayEnum)
+        postsViewModel.getPosts(subreddit, type?.type, isReset).observe(this,
+            Observer<PagedList<PostEntity>> {
+                swipeRefreshLayout.isRefreshing = false
+                postsAdapter.submitList(it)
+            })
     }
 
 
@@ -128,19 +146,9 @@ class SubRedditFragment : Fragment() {
     private fun initSwipeToRefresh() {
         swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.colorAccent))
         swipeRefreshLayout.setOnRefreshListener {
-            //postsViewModel.refresh()
-
-            sdgnjgdlsn("r/popular", "best")
+            observePostData()
         }
 
-    }
-
-    private fun sdgnjgdlsn(subreddit: String? = null, type: String? = null, isReset: Boolean = false){
-        postsViewModel.getPosts(subreddit,type, isReset).observe(this,
-            Observer<PagedList<PostEntity>> {
-                swipeRefreshLayout.isRefreshing = false
-                postsAdapter.submitList(it)
-            })
     }
 
     private fun getPagedListConfig() =
