@@ -56,7 +56,7 @@ class MainActivity : BaseAuthActivity() {
     private val loginRepository by inject<LoginRepository>()
 
     companion object {
-        val REQUEST_CODE_LOGIN = 754
+        const val REQUEST_CODE_LOGIN = 754
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,7 +140,7 @@ class MainActivity : BaseAuthActivity() {
         }
 
         if(drawerLayout.isDrawerOpen(Gravity.LEFT)){
-            drawerLayout.closeDrawer(Gravity.LEFT);
+            drawerLayout.closeDrawer(Gravity.LEFT)
         }
     }
 
@@ -184,6 +184,7 @@ class MainActivity : BaseAuthActivity() {
 
     @SuppressLint("CheckResult")
     private fun setupNightMode(){
+        Timber.d("FDGDFSFJSFS ${SharedPreferenceSingleton.getAccessTokenEntity()?.refreshToken}")
         darkModeSwitchMaterial.isChecked = SharedPreferenceSingleton.getCurrentThemePref() == ThemeHelper.DARK_MODE
         darkModeSwitchMaterial.setOnCheckedChangeListener { compoundButton, isChecked ->
             if(isChecked){
@@ -221,7 +222,7 @@ class MainActivity : BaseAuthActivity() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                SharedPreferenceSingleton.setAccessToken(it.accessToken)
+                SharedPreferenceSingleton.setAccessTokenEntity(it)
 
                 val host: NavHostFragment = supportFragmentManager
                     .findFragmentById(R.id.myNavHostFragment) as NavHostFragment

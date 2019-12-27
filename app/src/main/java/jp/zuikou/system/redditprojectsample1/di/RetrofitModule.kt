@@ -2,7 +2,6 @@ package jp.zuikou.system.redditprojectsample1.di
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import jp.zuikou.system.redditprojectsample1.BuildConfig
 import jp.zuikou.system.redditprojectsample1.BuildConfig.DEBUG
 import jp.zuikou.system.redditprojectsample1.config.AppConfig
 import jp.zuikou.system.redditprojectsample1.data.service.LoginServiceAPI
@@ -12,7 +11,6 @@ import jp.zuikou.system.redditprojectsample1.di.RetrofitObject.API_REQUEST_HEADE
 import jp.zuikou.system.redditprojectsample1.di.RetrofitObject.HTTP_LOG_INTERCEPTOR
 import jp.zuikou.system.redditprojectsample1.di.RetrofitObject.OKHTTP_CLIENT_AUTHEN_NAMESPACE
 import jp.zuikou.system.redditprojectsample1.di.RetrofitObject.OKHTTP_CLIENT_UNAUTHEN_NAMESPACE
-import jp.zuikou.system.redditprojectsample1.di.RetrofitObject.RETROFIT_CHOOSE_NAMESPACE
 import jp.zuikou.system.redditprojectsample1.di.RetrofitObject.RETROFIT_LOGGED_NAMESPACE
 import jp.zuikou.system.redditprojectsample1.di.RetrofitObject.RETROFIT_NOT_LOGGED_NAMESPACE
 import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
@@ -24,7 +22,6 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 
 
 object RetrofitObject {
@@ -84,7 +81,7 @@ val retrofitModule = module {
                 chain.request().newBuilder()
                     .addHeader("Content-Type", "application/json; charset=UTF-8")
                     .addHeader("Accept", "application/json")
-                    .addHeader("Authorization", "bearer ${SharedPreferenceSingleton.getAccessToken()}")
+                    .addHeader("Authorization", "bearer ${SharedPreferenceSingleton.getAccessTokenEntity()?.accessToken}")
                     .build()
             )
         }

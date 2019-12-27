@@ -15,6 +15,7 @@ class RedditApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         SharedPreferenceSingleton.init(applicationContext)
+        //SharedPreferenceSingleton.setAccessTokenEntity(null)
 
         val currentThemePrefString = SharedPreferenceSingleton.getCurrentThemePref()
         currentThemePrefString?.let {

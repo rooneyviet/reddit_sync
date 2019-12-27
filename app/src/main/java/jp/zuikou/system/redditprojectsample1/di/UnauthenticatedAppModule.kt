@@ -62,7 +62,7 @@ val repositoryModule = module {
 }
 
 val postsModule: Module = module {
-    factory<Datasource> { DatasourceImpl(get()) }
+    factory<Datasource> { DatasourceImpl(get(), get()) }
     viewModel { PostsViewModel(get()) }
     factory<PostRepositoryPresent> {
         PostRepositoryPresentImpl(
