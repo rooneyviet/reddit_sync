@@ -35,17 +35,7 @@ class DatasourceImpl(private var service: PostsServiceAPI, private val accessTok
                 }
 
         }
-        return service.getPagedListPosts(subReddit, type,page)
-            .map { json ->
-                val list = json.data?.children
-                    ?.map { it.data }
-                    ?.mapNotNull { it }
-
-                val posts = JsonPostMapper.transformToList(list ?: emptyList())
-
-                Pair(Pagination(json.data?.after ?: ""), posts)
-
-            }
+        return getPagedList(subReddit,type,page)
     }
 
     private fun getAccessToken(refreshingTokenString: String?): Single<AccessTokenEntity>{
