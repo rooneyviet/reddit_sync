@@ -16,48 +16,36 @@ import jp.zuikou.system.redditprojectsample1.domain.model.RSubSubcribersEntity
 import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import org.joda.time.LocalDateTime
 import org.koin.core.context.GlobalContext
-import timber.log.Timber
 
-class DatasourceImpl(private var service: PostsServiceAPI, private val accessTokenService: LoginServiceAPI): Datasource {
+class DatasourceImpl(
+    private var service: PostsServiceAPI,
+    private val accessTokenService: LoginServiceAPI
+) : Datasource {
     @SuppressLint("CheckResult")
     override fun getPagedListPosts(
         subReddit: String?,
         type: String?,
         page: String?
     ): Single<Pair<Pagination, List<PostEntity>>> {
-        val nowDateTime = LocalDateTime.now()
-        val savedAccessTokenEntity = SharedPreferenceSingleton.getAccessTokenEntity()
-        val getSavedDateTime = SharedPreferenceSingleton.getAccessTokenEntity()?.expiresIn?.convertStringToLocalDateTimeJoda(DateFormat.FULL_LONG_DATE_FORMAT_NOSPACE_NOCOLON)
-        if(savedAccessTokenEntity!=null && nowDateTime.isAfter(getSavedDateTime)){
-            return getAccessToken(savedAccessTokenEntity.refreshToken)
-                .flatMap{
-                    getPagedList(subReddit,type,page)
+        if (isAccessTokenIsExpired()) {
+            return getAccessToken()
+                .flatMap {
+                    getPagedList(subReddit, type, page)
                 }
-
         }
-        return getPagedList(subReddit,type,page)
+        return getPagedList(subReddit, type, page)
     }
 
-    private fun getAccessToken(refreshingTokenString: String?): Single<AccessTokenEntity>{
-        return accessTokenService.refreshingTheToken(refreshToken = refreshingTokenString)
-            .map {
-                val accessTokenEntity = JsonAccessTokenMapper.transformTo(it)
-                SharedPreferenceSingleton.setAccessTokenEntity(accessTokenEntity)
-                service = GlobalContext.get().koin.get()
-                accessTokenEntity
-            }
-    }
-
-
-    private fun getPagedList(subReddit: String?,
-                             type: String?,
-                             page: String?): Single<Pair<Pagination, List<PostEntity>>>{
-        return service.getPagedListPosts(subReddit, type,page)
+    private fun getPagedList(
+        subReddit: String?,
+        type: String?,
+        page: String?
+    ): Single<Pair<Pagination, List<PostEntity>>> {
+        return service.getPagedListPosts(subReddit, type, page)
             .map { json ->
                 val list = json.data?.children
                     ?.map { it.data }
                     ?.mapNotNull { it }
-                Timber.d("ADGSGSGDAFDGSFJKSFJ")
 
                 val posts = JsonPostMapper.transformToList(list ?: emptyList())
 
@@ -66,15 +54,47 @@ class DatasourceImpl(private var service: PostsServiceAPI, private val accessTok
 
     }
 
-    override fun getPagedListMineSubscribers(nextPage: String?,
-                                             limit: Int?): Single<Pair<Pagination, List<RSubSubcribersEntity>>> =
-        service.getPagedListMineSubscribers(nextPage= nextPage, limit = limit)
-            .map { json->
+    override fun getPagedListMineSubscribers(
+        nextPage: String?,
+        limit: Int?
+    ): Single<Pair<Pagination, List<RSubSubcribersEntity>>> {
+        if (isAccessTokenIsExpired()) {
+            return getAccessToken()
+                .flatMap {
+                    getListMineSubscribers(nextPage, limit)
+                }
+        }
+        return getListMineSubscribers(nextPage, limit)
+    }
+
+    private fun getListMineSubscribers(
+        nextPage: String?,
+        limit: Int?
+    ): Single<Pair<Pagination, List<RSubSubcribersEntity>>> =
+        service.getPagedListMineSubscribers(nextPage = nextPage, limit = limit)
+            .map { json ->
                 val list = json.data?.children
                     ?.map { it.data }
                     ?.mapNotNull { it }
 
-                val rsubcribersList = JsonRSubSubcribersMapper.transformToList(list?: emptyList())
+                val rsubcribersList = JsonRSubSubcribersMapper.transformToList(list ?: emptyList())
                 Pair(Pagination(json.data?.after), rsubcribersList)
             }
+
+    private fun getAccessToken(): Single<AccessTokenEntity> =
+        accessTokenService.refreshingTheToken()
+            .map {
+                val accessTokenEntity = JsonAccessTokenMapper.transformTo(it)
+                SharedPreferenceSingleton.setAccessTokenEntity(accessTokenEntity)
+                service = GlobalContext.get().koin.get()
+                accessTokenEntity
+            }
+
+    private fun isAccessTokenIsExpired(): Boolean {
+        val nowDateTime = LocalDateTime.now()
+        val savedAccessTokenEntity = SharedPreferenceSingleton.getAccessTokenEntity()
+        val getSavedDateTime = SharedPreferenceSingleton.getAccessTokenEntity()
+            ?.expiresIn?.convertStringToLocalDateTimeJoda(DateFormat.FULL_LONG_DATE_FORMAT_NOSPACE_NOCOLON)
+        return savedAccessTokenEntity != null && nowDateTime.isAfter(getSavedDateTime)
+    }
 }
