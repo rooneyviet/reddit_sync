@@ -19,4 +19,9 @@
         android:name="jp.zuikou.system.redditprojectsample1.SecondNextTestFragment"
         android:label="2nd Screen"
         tools:layout="@layout/fragment_second_next_test" />
+    <fragment
+        android:id="@+id/loginWebViewFragment"
+        android:name="jp.zuikou.system.redditprojectsample1.presentation.ui.LoginWebViewFragment"
+        android:label="fragment_login_web_view"
+        tools:layout="@layout/fragment_login_web_view" />
 </navigation>

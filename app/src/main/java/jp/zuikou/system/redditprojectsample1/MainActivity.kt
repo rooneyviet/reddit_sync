@@ -2,12 +2,10 @@ package jp.zuikou.system.redditprojectsample1
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -15,7 +13,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
@@ -24,14 +21,11 @@ import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import jp.zuikou.system.redditprojectsample1.config.AppConfig.AUTH_URL
-import jp.zuikou.system.redditprojectsample1.config.AppConfig.CLIENT_ID
-import jp.zuikou.system.redditprojectsample1.config.AppConfig.REDIRECT_URI
-import jp.zuikou.system.redditprojectsample1.config.AppConfig.SCOPE
 import jp.zuikou.system.redditprojectsample1.config.AppConfig.STATE
 import jp.zuikou.system.redditprojectsample1.domain.model.RSubSubcribersEntity
 import jp.zuikou.system.redditprojectsample1.domain.repository.LoginRepository
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
+import jp.zuikou.system.redditprojectsample1.presentation.navigation.MainHostFragment
 import jp.zuikou.system.redditprojectsample1.presentation.navigation_drawer.DrawerLayoutPagedListAdapter
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
 import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
@@ -72,9 +66,13 @@ class MainActivity : BaseAuthActivity() {
 
     private fun setupDrawerAction(){
         loginLayout.setOnClickListener {
-            val url = String.format(AUTH_URL, CLIENT_ID, STATE, REDIRECT_URI, SCOPE)
+            /*val url = String.format(AUTH_URL, CLIENT_ID, STATE, REDIRECT_URI, SCOPE)
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-            startActivityForResult(intent, REQUEST_CODE_LOGIN)
+            startActivityForResult(intent, REQUEST_CODE_LOGIN)*/
+
+            val host: MainHostFragment = supportFragmentManager
+                .findFragmentById(R.id.myNavHostFragment) as MainHostFragment
+            host.navController.navigate(R.id.loginWebViewFragment)
         }
     }
 
@@ -85,8 +83,8 @@ class MainActivity : BaseAuthActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar_main)
         setSupportActionBar(toolbar)
 
-        val host: NavHostFragment = supportFragmentManager
-            .findFragmentById(R.id.myNavHostFragment) as NavHostFragment? ?: return
+        val host: MainHostFragment = supportFragmentManager
+            .findFragmentById(R.id.myNavHostFragment) as MainHostFragment? ?: return
 
         // Set up Action Bar
         val navController = host.navController
@@ -129,8 +127,8 @@ class MainActivity : BaseAuthActivity() {
     }
 
     private fun subClicked(subreddit: String = "") {
-        val host: NavHostFragment = supportFragmentManager
-            .findFragmentById(R.id.myNavHostFragment) as NavHostFragment
+        val host: MainHostFragment = supportFragmentManager
+            .findFragmentById(R.id.myNavHostFragment) as MainHostFragment
 
         val childFragments = host.childFragmentManager.fragments
         childFragments.forEach { fragment ->
@@ -224,8 +222,8 @@ class MainActivity : BaseAuthActivity() {
             .subscribe({
                 SharedPreferenceSingleton.setAccessTokenEntity(it)
 
-                val host: NavHostFragment = supportFragmentManager
-                    .findFragmentById(R.id.myNavHostFragment) as NavHostFragment
+                val host: MainHostFragment = supportFragmentManager
+                    .findFragmentById(R.id.myNavHostFragment) as MainHostFragment
 
                 val childFragments = host.childFragmentManager.fragments
                 childFragments.forEach { fragment ->

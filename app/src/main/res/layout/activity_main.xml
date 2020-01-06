@@ -30,7 +30,7 @@
         <include layout="@layout/app_bar_main" />
         <fragment
             android:id="@+id/myNavHostFragment"
-            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:name="jp.zuikou.system.redditprojectsample1.presentation.navigation.MainHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:defaultNavHost="true"
