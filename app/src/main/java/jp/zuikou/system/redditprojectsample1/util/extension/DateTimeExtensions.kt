@@ -1,9 +1,7 @@
 package jp.zuikou.system.kintaiapp.presentation.extensions
 
 import org.joda.time.DateTime
-import org.joda.time.LocalDate
 import org.joda.time.LocalDateTime
-import org.joda.time.LocalTime
 import org.joda.time.format.DateTimeFormat
 
 
@@ -23,6 +21,6 @@ fun DateTime.convertDateTimeJodaToString(dateFormat: String): String =
 fun LocalDateTime.convertLocalDateTimeJodaToString(dateFormat: String): String =
     DateTimeFormat.forPattern(dateFormat).print(this)
 
-fun String?.convertStringToLocalDateTimeJoda(dateFormatPattern: String): LocalDateTime =
+fun String?.convertStringToLocalDateTimeJoda(dateFormatPattern: String): LocalDateTime? =
     LocalDateTime.parse(this, DateTimeFormat.forPattern(dateFormatPattern))
 

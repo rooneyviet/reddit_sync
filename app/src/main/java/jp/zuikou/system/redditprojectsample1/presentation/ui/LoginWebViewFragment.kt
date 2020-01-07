@@ -1,7 +1,6 @@
 package jp.zuikou.system.redditprojectsample1.presentation.ui
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +11,6 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -23,11 +21,8 @@ import jp.zuikou.system.redditprojectsample1.config.AppConfig.REDIRECT_URI
 import jp.zuikou.system.redditprojectsample1.config.AppConfig.SCOPE
 import jp.zuikou.system.redditprojectsample1.config.AppConfig.STATE
 import jp.zuikou.system.redditprojectsample1.domain.repository.LoginRepository
-import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.LoginViewModel
-import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import kotlinx.android.synthetic.main.fragment_login_web_view.*
 import org.koin.android.ext.android.inject
-import timber.log.Timber
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -72,11 +67,9 @@ class LoginWebViewFragment : BaseFragment() {
                 view: WebView?,
                 request: WebResourceRequest?
             ): Boolean {
-                val uri = Uri.parse(url)
-
-                val state = uri.getQueryParameter("state")
+                val state = request?.url?.getQueryParameter("state")
                 if (state == STATE) {
-                    val code = uri.getQueryParameter("code")
+                    val code = request?.url?.getQueryParameter("code")
                     //getAccessToken(code)
                     getAccessToken(code)
                     return true
@@ -116,7 +109,6 @@ class LoginWebViewFragment : BaseFragment() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                SharedPreferenceSingleton.setAccessTokenEntity(it)
                 loginViewModel.authenticate(true)
                 findNavController().popBackStack(R.id.subRedditFragment, false)
             },{

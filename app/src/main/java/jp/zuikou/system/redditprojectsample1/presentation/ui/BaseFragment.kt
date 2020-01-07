@@ -25,7 +25,7 @@ abstract class BaseFragment: Fragment() {
                         Toast.makeText(context, "Login failed", Toast.LENGTH_SHORT).show()
                     }
                     authenticationState == LoginViewModel.AuthenticationState.UNAUTHENTICATED -> {
-
+                        refreshFragment()
                     }
                 }
             })

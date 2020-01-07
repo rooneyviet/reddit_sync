@@ -16,6 +16,7 @@ import jp.zuikou.system.redditprojectsample1.domain.model.RSubSubcribersEntity
 import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import org.joda.time.LocalDateTime
 import org.koin.core.context.GlobalContext
+import timber.log.Timber
 
 class DatasourceImpl(
     private var service: PostsServiceAPI,
@@ -85,6 +86,7 @@ class DatasourceImpl(
         accessTokenService.refreshingTheToken()
             .map {
                 val accessTokenEntity = JsonAccessTokenMapper.transformTo(it)
+                Timber.d("DJKGJDGJJQ ${accessTokenEntity}")
                 SharedPreferenceSingleton.setAccessTokenEntity(accessTokenEntity)
                 service = GlobalContext.get().koin.get()
                 accessTokenEntity
@@ -95,6 +97,6 @@ class DatasourceImpl(
         val savedAccessTokenEntity = SharedPreferenceSingleton.getAccessTokenEntity()
         val getSavedDateTime = SharedPreferenceSingleton.getAccessTokenEntity()
             ?.expiresIn?.convertStringToLocalDateTimeJoda(DateFormat.FULL_LONG_DATE_FORMAT_NOSPACE_NOCOLON)
-        return savedAccessTokenEntity != null && nowDateTime.isAfter(getSavedDateTime)
+        return savedAccessTokenEntity != null && getSavedDateTime!=null && nowDateTime.isAfter(getSavedDateTime)
     }
 }

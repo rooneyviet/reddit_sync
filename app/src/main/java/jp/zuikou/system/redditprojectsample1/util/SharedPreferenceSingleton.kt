@@ -60,12 +60,21 @@ object SharedPreferenceSingleton {
         return obj
     }
 
+    fun setAccessTokenEntityNull(){
+        pref.edit().apply {
+            putString(Key.ACCESS_TOKEN_ENTITY, null)
+        }.apply()
+    }
+
     fun setAccessTokenEntity(accessTokenEntity: AccessTokenEntity?){
-        val getCurrentAccessToken = getAccessTokenEntity() ?: AccessTokenEntity(expiresIn = "")
-        getCurrentAccessToken.accessToken = accessTokenEntity?.accessToken
-        getCurrentAccessToken.expiresIn = accessTokenEntity?.expiresIn!!
-        if (getCurrentAccessToken.refreshToken == null || accessTokenEntity?.refreshToken != null) {
-            getCurrentAccessToken.refreshToken = accessTokenEntity?.refreshToken
+        val getCurrentAccessToken = accessTokenEntity?.let {
+            getAccessTokenEntity()?: AccessTokenEntity()
+        }
+
+        getCurrentAccessToken?.accessToken = accessTokenEntity?.accessToken
+        getCurrentAccessToken?.expiresIn = accessTokenEntity?.expiresIn
+        if (getCurrentAccessToken?.refreshToken == null || accessTokenEntity?.refreshToken != null) {
+            getCurrentAccessToken?.refreshToken = accessTokenEntity?.refreshToken
         }
 
         val gson = Gson()

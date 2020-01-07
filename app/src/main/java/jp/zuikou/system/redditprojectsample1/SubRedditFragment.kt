@@ -14,7 +14,6 @@ import androidx.navigation.navOptions
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import jp.zuikou.system.redditprojectsample1.di.RetrofitObject
 import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditSortByDayEnum
@@ -23,17 +22,12 @@ import jp.zuikou.system.redditprojectsample1.presentation.ui.BaseFragment
 import jp.zuikou.system.redditprojectsample1.presentation.ui.PostsPagedListAdapter
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.PostsViewModel
-import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import kotlinx.android.synthetic.main.fragment_sub_reddit.*
 import kotlinx.android.synthetic.main.include_posts_list.*
-import kotlinx.android.synthetic.main.list_item_network_state.*
 import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.Koin
-import org.koin.core.context.GlobalContext
 import org.koin.core.parameter.parametersOf
-import org.koin.core.qualifier.named
 import timber.log.Timber
 
 // TODO: Rename parameter arguments, choose names that match
@@ -86,6 +80,7 @@ class SubRedditFragment : BaseFragment() {
         getKoin().setProperty(PROPERTY_PAGED_LIST, getPagedListConfig())
         //GlobalContext.get().koin.setProperty(PROPERTY_PAGED_LIST, getPagedListConfig())
         // Inflate the layout for this fragment
+        //SharedPreferenceSingleton.setAccessTokenEntityNull()
         return inflater.inflate(R.layout.fragment_sub_reddit, container, false)
     }
 
@@ -112,7 +107,6 @@ class SubRedditFragment : BaseFragment() {
 
         observerNetworkState()
 
-        observePostData()
 
         postsAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
