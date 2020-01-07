@@ -19,6 +19,7 @@ import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditSortByDayEnum
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditTypeEnum
+import jp.zuikou.system.redditprojectsample1.presentation.ui.BaseFragment
 import jp.zuikou.system.redditprojectsample1.presentation.ui.PostsPagedListAdapter
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.PostsViewModel
@@ -48,7 +49,7 @@ private const val ARG_PARAM2 = "param2"
  * Use the [SubRedditFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SubRedditFragment : Fragment() {
+class SubRedditFragment : BaseFragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -86,6 +87,10 @@ class SubRedditFragment : Fragment() {
         //GlobalContext.get().koin.setProperty(PROPERTY_PAGED_LIST, getPagedListConfig())
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_sub_reddit, container, false)
+    }
+
+    override fun refreshFragment() {
+        observePostData(isReset = true)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

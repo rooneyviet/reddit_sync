@@ -27,6 +27,7 @@ import jp.zuikou.system.redditprojectsample1.domain.repository.LoginRepository
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
 import jp.zuikou.system.redditprojectsample1.presentation.navigation.MainHostFragment
 import jp.zuikou.system.redditprojectsample1.presentation.navigation_drawer.DrawerLayoutPagedListAdapter
+import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.LoginViewModel
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
 import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import jp.zuikou.system.redditprojectsample1.util.ThemeHelper
@@ -182,7 +183,6 @@ class MainActivity : BaseAuthActivity() {
 
     @SuppressLint("CheckResult")
     private fun setupNightMode(){
-        Timber.d("FDGDFSFJSFS ${SharedPreferenceSingleton.getAccessTokenEntity()?.refreshToken}")
         darkModeSwitchMaterial.isChecked = SharedPreferenceSingleton.getCurrentThemePref() == ThemeHelper.DARK_MODE
         darkModeSwitchMaterial.setOnCheckedChangeListener { compoundButton, isChecked ->
             if(isChecked){

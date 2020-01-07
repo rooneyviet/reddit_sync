@@ -1,16 +1,33 @@
 package jp.zuikou.system.redditprojectsample1.presentation.ui
 
-import android.content.Context
+import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebResourceRequest
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import jp.zuikou.system.redditprojectsample1.R
+import jp.zuikou.system.redditprojectsample1.config.AppConfig.AUTH_URL
+import jp.zuikou.system.redditprojectsample1.config.AppConfig.CLIENT_ID
+import jp.zuikou.system.redditprojectsample1.config.AppConfig.REDIRECT_URI
+import jp.zuikou.system.redditprojectsample1.config.AppConfig.SCOPE
+import jp.zuikou.system.redditprojectsample1.config.AppConfig.STATE
+import jp.zuikou.system.redditprojectsample1.domain.repository.LoginRepository
+import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.LoginViewModel
+import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
+import kotlinx.android.synthetic.main.fragment_login_web_view.*
+import org.koin.android.ext.android.inject
+import timber.log.Timber
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -25,10 +42,12 @@ private const val ARG_PARAM2 = "param2"
  * Use the [LoginWebViewFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class LoginWebViewFragment : Fragment() {
+class LoginWebViewFragment : BaseFragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    private val loginRepository by inject<LoginRepository>()
     //private var listener: OnFragmentInteractionListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,8 +56,44 @@ class LoginWebViewFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+    }
 
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val url = String.format(AUTH_URL, CLIENT_ID, STATE, REDIRECT_URI, SCOPE)
+        loginWebview.loadUrl(url)
+        loginWebview.webViewClient = object : WebViewClient(){
+            override fun onPageFinished(view: WebView?, url: String?) {
+                //super.onPageFinished(view, url)
+            }
+
+            override fun shouldOverrideUrlLoading(
+                view: WebView?,
+                request: WebResourceRequest?
+            ): Boolean {
+                val uri = Uri.parse(url)
+
+                val state = uri.getQueryParameter("state")
+                if (state == STATE) {
+                    Timber.d("FFFFFFFFFFF STATE $state")
+                    val code = uri.getQueryParameter("code")
+                    Timber.d("FFFFFFFFFFF CODE $code")
+                    //getAccessToken(code)
+                    getAccessToken(code)
+                    return true
+                }
+                return false
+            }
+        }
+
+        onbackPressedListener()
+    }
+    override fun refreshFragment() {
+
+    }
+
+    private fun onbackPressedListener(){
         val callback = object : OnBackPressedCallback(true /** true means that the callback is enabled */) {
             override fun handleOnBackPressed() {
                 // Show your dialog and handle navigation
@@ -55,6 +110,20 @@ class LoginWebViewFragment : Fragment() {
         // Inflate the layout for this fragment
 
         return inflater.inflate(R.layout.fragment_login_web_view, container, false)
+    }
+
+    @SuppressLint("CheckResult")
+    private fun getAccessToken(code: String?){
+        loginRepository.getAccessToken(code)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                SharedPreferenceSingleton.setAccessTokenEntity(it)
+                loginViewModel.authenticate(true)
+                findNavController().popBackStack(R.id.subRedditFragment, false)
+            },{
+                loginViewModel.authenticate(false)
+            })
     }
 
     // TODO: Rename method, update argument and hook method into UI event
