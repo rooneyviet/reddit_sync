@@ -5,7 +5,7 @@ import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.LoginViewMod
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @SuppressLint("Registered")
-open class BaseAuthActivity : BaseActivity() {
+open abstract class BaseAuthActivity : BaseActivity() {
     private val loginViewModel: LoginViewModel by viewModel()
 
 }
