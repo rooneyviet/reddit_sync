@@ -76,9 +76,7 @@ class LoginWebViewFragment : BaseFragment() {
 
                 val state = uri.getQueryParameter("state")
                 if (state == STATE) {
-                    Timber.d("FFFFFFFFFFF STATE $state")
                     val code = uri.getQueryParameter("code")
-                    Timber.d("FFFFFFFFFFF CODE $code")
                     //getAccessToken(code)
                     getAccessToken(code)
                     return true
