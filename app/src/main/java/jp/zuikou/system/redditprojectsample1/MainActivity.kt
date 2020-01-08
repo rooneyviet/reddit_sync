@@ -1,9 +1,7 @@
 package jp.zuikou.system.redditprojectsample1
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
-import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.Toolbar
@@ -19,9 +17,6 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import jp.zuikou.system.redditprojectsample1.config.AppConfig.STATE
 import jp.zuikou.system.redditprojectsample1.domain.model.RSubSubcribersEntity
 import jp.zuikou.system.redditprojectsample1.domain.repository.LoginRepository
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
@@ -35,7 +30,6 @@ import kotlinx.android.synthetic.main.profile_sidebar_layout.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
-import timber.log.Timber
 
 class MainActivity : BaseAuthActivity() {
 
@@ -55,7 +49,6 @@ class MainActivity : BaseAuthActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.d("isaccesstokensaved ${SharedPreferenceSingleton.isAccessTokenSaved()}")
         setContentView(R.layout.activity_main)
 
         setupNavigation()
@@ -137,8 +130,8 @@ class MainActivity : BaseAuthActivity() {
             }
         }
 
-        if(drawerLayout.isDrawerOpen(Gravity.LEFT)){
-            drawerLayout.closeDrawer(Gravity.LEFT)
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START)
         }
     }
 
@@ -194,48 +187,6 @@ class MainActivity : BaseAuthActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (intent != null && intent.action == Intent.ACTION_VIEW) {
-            val uri = intent.data
-            if (uri!!.getQueryParameter("error") != null) {
-                val error = uri.getQueryParameter("error")
-                Timber.e( "An error has occurred : $error")
-            } else {
-                val state = uri.getQueryParameter("state")
-                if (state == STATE) {
-                    val code = uri.getQueryParameter("code")
-                    //getAccessToken(code)
-                    getAccessToken(code)
-                }
-            }
-        }
-    }
 
-
-    @SuppressLint("CheckResult")
-    private fun getAccessToken(code: String?){
-        loginRepository.getAccessToken(code)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                SharedPreferenceSingleton.setAccessTokenEntity(it)
-
-                val host: MainHostFragment = supportFragmentManager
-                    .findFragmentById(R.id.myNavHostFragment) as MainHostFragment
-
-                val childFragments = host.childFragmentManager.fragments
-                childFragments.forEach { fragment ->
-                    if (fragment is SubRedditFragment && fragment.isVisible) {
-                        /*unloadKoinModules(listOf(postsModule, retrofitModule))
-                        stopKoin()
-                        RedditApplication.startKoinInApp(application)*/
-                        fragment.observePostData(isReset = true)
-                    }
-                }
-
-            },{
-            })
-    }
 
 }
