@@ -21,6 +21,7 @@ import jp.zuikou.system.redditprojectsample1.config.AppConfig.REDIRECT_URI
 import jp.zuikou.system.redditprojectsample1.config.AppConfig.SCOPE
 import jp.zuikou.system.redditprojectsample1.config.AppConfig.STATE
 import jp.zuikou.system.redditprojectsample1.domain.repository.LoginRepository
+import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import kotlinx.android.synthetic.main.fragment_login_web_view.*
 import org.koin.android.ext.android.inject
 
@@ -110,6 +111,7 @@ class LoginWebViewFragment : BaseFragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 loginViewModel.authenticate(true)
+                SharedPreferenceSingleton.setAccessTokenEntity(it)
                 findNavController().popBackStack(R.id.subRedditFragment, false)
             },{
                 loginViewModel.authenticate(false)

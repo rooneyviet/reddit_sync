@@ -107,7 +107,7 @@ class SubRedditFragment : BaseFragment() {
 
         observerNetworkState()
 
-
+        //observePostData()
         postsAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 if (positionStart == 0) {

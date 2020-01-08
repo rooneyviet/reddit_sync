@@ -25,6 +25,8 @@ import jp.zuikou.system.redditprojectsample1.presentation.navigation_drawer.Draw
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
 import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import jp.zuikou.system.redditprojectsample1.util.ThemeHelper
+import jp.zuikou.system.redditprojectsample1.util.extension.gone
+import jp.zuikou.system.redditprojectsample1.util.extension.visible
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.profile_sidebar_layout.*
 import org.koin.android.ext.android.inject
@@ -67,6 +69,14 @@ class MainActivity : BaseAuthActivity() {
                 .findFragmentById(R.id.myNavHostFragment) as MainHostFragment
             host.navController.navigate(R.id.loginWebViewFragment)
         }
+
+        SharedPreferenceSingleton.isLoggedInLivePreference().observe(this, Observer<Boolean> { loggedIn ->
+            if(loggedIn){
+                loginLayout.gone()
+            }else{
+                loginLayout.visible()
+            }
+        })
     }
 
 
