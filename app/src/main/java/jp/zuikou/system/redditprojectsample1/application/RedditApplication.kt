@@ -15,18 +15,14 @@ class RedditApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         SharedPreferenceSingleton.init(applicationContext)
+        //SharedPreferenceSingleton.setAccessTokenEntity(null)
 
         val currentThemePrefString = SharedPreferenceSingleton.getCurrentThemePref()
         currentThemePrefString?.let {
             ThemeHelper.applyTheme(currentThemePrefString)
         }
 
-        startKoin {
-            androidContext(this@RedditApplication)
-            androidFileProperties()
-            injectBasicFeature()
-            //injectLoggedInFeatures()
-        }
+        RedditApplication.startKoinInApp(this@RedditApplication)
 
 
 
@@ -36,4 +32,15 @@ class RedditApplication: Application() {
 
         JodaTimeAndroid.init(this)
     }
+    companion object{
+        fun startKoinInApp(application: Application){
+            startKoin {
+                androidContext(application)
+                androidFileProperties()
+                injectBasicFeature()
+                //injectLoggedInFeatures()
+            }
+        }
+    }
+
 }

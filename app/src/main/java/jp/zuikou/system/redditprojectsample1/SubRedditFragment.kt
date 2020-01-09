@@ -9,21 +9,24 @@ import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.navOptions
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
+import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditSortByDayEnum
+import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditTypeEnum
+import jp.zuikou.system.redditprojectsample1.presentation.ui.BaseFragment
 import jp.zuikou.system.redditprojectsample1.presentation.ui.PostsPagedListAdapter
+import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.PostsViewModel
 import kotlinx.android.synthetic.main.fragment_sub_reddit.*
 import kotlinx.android.synthetic.main.include_posts_list.*
-import kotlinx.android.synthetic.main.list_item_network_state.*
 import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.Koin
-import org.koin.core.context.GlobalContext
 import org.koin.core.parameter.parametersOf
 import timber.log.Timber
 
@@ -40,13 +43,15 @@ private const val ARG_PARAM2 = "param2"
  * Use the [SubRedditFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SubRedditFragment : Fragment() {
+class SubRedditFragment : BaseFragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private var listener: OnFragmentInteractionListener? = null
 
     private val postsViewModel: PostsViewModel by viewModel()
+
+    private lateinit var shareMainViewModel: MainViewModel
 
     //private lateinit var mAdapter2: PostsPagedListAdapter
 
@@ -69,10 +74,18 @@ class SubRedditFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        activity?.let {
+            shareMainViewModel = ViewModelProviders.of(it).get(MainViewModel::class.java)
+        }
         getKoin().setProperty(PROPERTY_PAGED_LIST, getPagedListConfig())
         //GlobalContext.get().koin.setProperty(PROPERTY_PAGED_LIST, getPagedListConfig())
         // Inflate the layout for this fragment
+        //SharedPreferenceSingleton.setAccessTokenEntityNull()
         return inflater.inflate(R.layout.fragment_sub_reddit, container, false)
+    }
+
+    override fun refreshFragment() {
+        observePostData(isReset = true)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -87,14 +100,24 @@ class SubRedditFragment : Fragment() {
             }
         }
 
+        initSwipeToRefresh()
+
         recyclerView.layoutManager = LinearLayoutManager(this.context)
         recyclerView.adapter = postsAdapter
 
-        postsViewModel.getPosts("r/popular","best").observe(this,
-            Observer<PagedList<PostEntity>> {
-                postsAdapter.submitList(it)
-            })
+        observerNetworkState()
 
+        //observePostData()
+        postsAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                if (positionStart == 0) {
+                    recyclerView.scrollToPosition(0)
+                }
+            }
+        })
+    }
+
+    private fun observerNetworkState(){
         postsViewModel.getNetworkState().observe(this,
             Observer<NetworkState> {
                 if (postsAdapter.currentList.isNullOrEmpty() || swipeRefreshLayout.isRefreshing){
@@ -103,19 +126,28 @@ class SubRedditFragment : Fragment() {
                     postsAdapter.setNetworkState(it)
                 }
             })
-
-        //initSwipeToRefresh()
-
-        postsViewModel.refresh()
-
     }
+
+    fun observePostData(subreddit: String? = shareMainViewModel.currentSubRedditRequestValue.subReddit,
+                        type: SubRedditTypeEnum? = shareMainViewModel.currentSubRedditRequestValue.subType,
+                        subRedditSortByDayEnum: SubRedditSortByDayEnum? = null,
+                        isReset: Boolean = false) {
+        shareMainViewModel.saveCurrentSubCurrentRequest(subreddit, type, subRedditSortByDayEnum)
+        postsViewModel.getPosts(subreddit, type?.type, isReset).observe(this,
+            Observer<PagedList<PostEntity>> {
+                swipeRefreshLayout.isRefreshing = false
+                postsAdapter.submitList(it)
+            })
+    }
+
 
 
     private fun initSwipeToRefresh() {
         swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.colorAccent))
         swipeRefreshLayout.setOnRefreshListener {
-            postsViewModel.refresh()
+            observePostData()
         }
+
     }
 
     private fun getPagedListConfig() =
@@ -189,7 +221,7 @@ class SubRedditFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(param1: String? = null, param2: String? = null) =
             SubRedditFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)

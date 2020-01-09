@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -12,29 +11,27 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.jakewharton.rxbinding2.widget.RxCompoundButton
-import jp.zuikou.system.redditprojectsample1.di.RetrofitObject
 import jp.zuikou.system.redditprojectsample1.domain.model.RSubSubcribersEntity
+import jp.zuikou.system.redditprojectsample1.domain.repository.LoginRepository
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
+import jp.zuikou.system.redditprojectsample1.presentation.navigation.MainHostFragment
 import jp.zuikou.system.redditprojectsample1.presentation.navigation_drawer.DrawerLayoutPagedListAdapter
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
 import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import jp.zuikou.system.redditprojectsample1.util.ThemeHelper
+import jp.zuikou.system.redditprojectsample1.util.extension.gone
+import jp.zuikou.system.redditprojectsample1.util.extension.visible
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.profile_sidebar_layout.*
-import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
-import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 class MainActivity : BaseAuthActivity() {
 
@@ -45,20 +42,52 @@ class MainActivity : BaseAuthActivity() {
     private val drawerPagedListAdapter: DrawerLayoutPagedListAdapter by inject{
         parametersOf({subreddit: String -> subClicked(subreddit) }) }
 
+
+    private val loginRepository by inject<LoginRepository>()
+
+    companion object {
+        const val REQUEST_CODE_LOGIN = 754
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        getKoin().setProperty(RetrofitObject.RETROFIT_CHOOSE_NAMESPACE, RetrofitObject.RETROFIT_LOGGED_NAMESPACE)
         setContentView(R.layout.activity_main)
 
+        setupNavigation()
+        setupNightMode()
+        initAndObserveData()
+        setupDrawerAction()
+    }
+
+    private fun setupDrawerAction(){
+        loginLayout.setOnClickListener {
+            /*val url = String.format(AUTH_URL, CLIENT_ID, STATE, REDIRECT_URI, SCOPE)
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivityForResult(intent, REQUEST_CODE_LOGIN)*/
+
+            val host: MainHostFragment = supportFragmentManager
+                .findFragmentById(R.id.myNavHostFragment) as MainHostFragment
+            host.navController.navigate(R.id.loginWebViewFragment)
+        }
+
+        SharedPreferenceSingleton.isLoggedInLivePreference().observe(this, Observer<Boolean> { loggedIn ->
+            if(loggedIn){
+                loginLayout.gone()
+            }else{
+                loginLayout.visible()
+            }
+        })
+    }
+
+
+    private fun setupNavigation(){
         val drawerLayout : DrawerLayout? = findViewById(R.id.drawerLayout)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar_main)
         setSupportActionBar(toolbar)
 
-        //val drawerLayout : DrawerLayout? = findViewById(R.id.drawerLayout)
-
-        val host: NavHostFragment = supportFragmentManager
-            .findFragmentById(R.id.myNavHostFragment) as NavHostFragment? ?: return
+        val host: MainHostFragment = supportFragmentManager
+            .findFragmentById(R.id.myNavHostFragment) as MainHostFragment? ?: return
 
         // Set up Action Bar
         val navController = host.navController
@@ -74,13 +103,6 @@ class MainActivity : BaseAuthActivity() {
         // TODO END STEP 9.5
 
         setupActionBar(navController, appBarConfiguration)
-
-        //mainViewModel.refreshGetSubcribersList()
-
-        setupNightMode()
-
-
-
         navController.addOnDestinationChangedListener { nc: NavController, nd: NavDestination, bundle: Bundle? ->
             if (nd.id == nc.graph.startDestination) {
                 drawerLayout?.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
@@ -88,10 +110,6 @@ class MainActivity : BaseAuthActivity() {
                 drawerLayout?.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             }
         }
-
-        initAndObserveData()
-
-        //Glide.with(this).load("http://goo.gl/gEgYUd").into(navHeaderImage);
     }
 
     private fun initAndObserveData(){
@@ -108,21 +126,28 @@ class MainActivity : BaseAuthActivity() {
 
             })
 
-        //initSwipeToRefresh()
-
-        //postsViewModel.refresh()
+        subClicked()
     }
 
-    private fun subClicked(subreddit: String) {
-        Toast.makeText(applicationContext, subreddit, Toast.LENGTH_LONG).show()
+    private fun subClicked(subreddit: String = "") {
+        val host: MainHostFragment = supportFragmentManager
+            .findFragmentById(R.id.myNavHostFragment) as MainHostFragment
+
+        val childFragments = host.childFragmentManager.fragments
+        childFragments.forEach { fragment ->
+            if (fragment is SubRedditFragment && fragment.isVisible) {
+                fragment.observePostData(subreddit)
+            }
+        }
+
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawer(GravityCompat.START)
+        }
     }
+
 
     private fun setupActionBar(navController: NavController,
                                appBarConfig : AppBarConfiguration) {
-        // TODO STEP 9.6 - Have NavigationUI handle what your ActionBar displays
-//        // This allows NavigationUI to decide what label to show in the action bar
-//        // By using appBarConfig, it will also determine whether to
-//        // show the up arrow or drawer menu icon
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfig)
         setupActionBarWithNavController(navController, appBarConfig)
     }
@@ -161,23 +186,7 @@ class MainActivity : BaseAuthActivity() {
     @SuppressLint("CheckResult")
     private fun setupNightMode(){
         darkModeSwitchMaterial.isChecked = SharedPreferenceSingleton.getCurrentThemePref() == ThemeHelper.DARK_MODE
-
-        /*RxCompoundButton.checkedChanges(darkModeSwitchMaterial)
-            .throttleFirst(1, TimeUnit.SECONDS)
-            .subscribe {isChecked->
-                if(isChecked){
-                    SharedPreferenceSingleton.setCurrentThemePref(ThemeHelper.DARK_MODE)
-                    ThemeHelper.applyTheme(ThemeHelper.DARK_MODE)
-                } else {
-                    SharedPreferenceSingleton.setCurrentThemePref(ThemeHelper.LIGHT_MODE)
-                    ThemeHelper.applyTheme(ThemeHelper.LIGHT_MODE)
-                }
-                finish()
-                startActivity(intent)
-            }*/
-
         darkModeSwitchMaterial.setOnCheckedChangeListener { compoundButton, isChecked ->
-
             if(isChecked){
                 SharedPreferenceSingleton.setCurrentThemePref(ThemeHelper.DARK_MODE)
                 ThemeHelper.applyTheme(ThemeHelper.DARK_MODE)
@@ -185,9 +194,9 @@ class MainActivity : BaseAuthActivity() {
                 SharedPreferenceSingleton.setCurrentThemePref(ThemeHelper.LIGHT_MODE)
                 ThemeHelper.applyTheme(ThemeHelper.LIGHT_MODE)
             }
-
         }
     }
+
 
 
 }
