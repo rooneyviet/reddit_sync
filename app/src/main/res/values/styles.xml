@@ -33,5 +33,15 @@
         <item name="android:textColor">@color/actionBarTextColor</item>
     </style>
 
+    <style name="TextSmall" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/textSmallTextColor</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TextMedium" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/textMediumTextColor</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
 
 </resources>

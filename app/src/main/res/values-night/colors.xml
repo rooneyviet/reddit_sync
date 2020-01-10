@@ -8,7 +8,7 @@
     <color name="windowBackground">#000000</color>
 
 
-
-
+    <color name="textSmallTextColor">#CFCFCF</color>
+    <color name="textMediumTextColor">#FDFDFD</color>
     <color name="actionBarTextColor">#FDFDFD</color>
 </resources>

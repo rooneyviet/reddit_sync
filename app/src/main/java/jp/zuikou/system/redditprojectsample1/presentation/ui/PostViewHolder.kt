@@ -9,7 +9,6 @@ import jp.zuikou.system.redditprojectsample1.R
 import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.extension.load
 import jp.zuikou.system.redditprojectsample1.util.extension.gone
-import jp.zuikou.system.redditprojectsample1.util.extension.loadImage
 import jp.zuikou.system.redditprojectsample1.util.extension.visible
 import kotlinx.android.synthetic.main.list_item_post.view.*
 import java.text.DateFormat
@@ -25,8 +24,11 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         itemView.setOnClickListener { clickItem.invoke(post, itemView.imageViewThumb) }
         itemView.textViewTitle.text = post.title
         itemView.textViewAuthor.text = post.author
-        itemView.textViewSubtitle.text = DateFormat.getDateInstance(DateFormat.FULL).format(post.createdUtc)
+        itemView.textViewTime.text = DateFormat.getDateInstance(DateFormat.FULL).format(post.createdUtc)
         itemView.imageViewThumb.transitionName = post.remoteId
+        itemView.textViewCategory.text = post.subredditNamePrefixed
+        itemView.votesNumberText.text = post.score.toString()
+        itemView.commentNumberText.text = post.numComments.toString() + " comments"
         val imageUrl = post.imagePreview?.let {
             itemView.imageViewThumb.visible()
             if(!it.isNullOrEmpty()){
