@@ -18,6 +18,7 @@ class PostsPagedListAdapter(private val retryCallback: () -> Unit,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             R.layout.list_item_post -> PostViewHolder.create(parent)
+            R.layout.list_item_post_vote_on_the_right_layout -> PostViewHolder.create(parent, R.layout.list_item_post_vote_on_the_right_layout)
             R.layout.list_item_network_state -> NetworkStateViewHolder.create(parent, retryCallback)
             else -> throw IllegalArgumentException("unknown view type")
         }
@@ -26,6 +27,7 @@ class PostsPagedListAdapter(private val retryCallback: () -> Unit,
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (getItemViewType(position)) {
             R.layout.list_item_post -> (holder as PostViewHolder).bindTo(getItem(position), clickItem)
+            R.layout.list_item_post_vote_on_the_right_layout -> (holder as PostViewHolder).bindTo(getItem(position), clickItem)
             R.layout.list_item_network_state -> (holder as NetworkStateViewHolder).bindTo(networkState)
         }
     }
@@ -38,7 +40,7 @@ class PostsPagedListAdapter(private val retryCallback: () -> Unit,
         return if (hasExtraRow() && position == itemCount - 1) {
             R.layout.list_item_network_state
         } else {
-            R.layout.list_item_post
+            R.layout.list_item_post_vote_on_the_right_layout
         }
     }
 

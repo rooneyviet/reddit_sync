@@ -47,9 +47,9 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
 
     companion object {
-        fun create(parent: ViewGroup): PostViewHolder {
+        fun create(parent: ViewGroup, postLayoutId: Int = R.layout.list_item_post): PostViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
-            val view = layoutInflater.inflate(R.layout.list_item_post, parent, false)
+            val view = layoutInflater.inflate(postLayoutId, parent, false)
             return PostViewHolder(view)
         }
     }
