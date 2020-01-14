@@ -65,7 +65,7 @@ data class JsonPostResponse(
     @SerializedName("is_video")
     val isVideo: Boolean?,
     @SerializedName("likes")
-    val likes: Any?,
+    val likes: Boolean?,
     @SerializedName("locked")
     val locked: Boolean?,
     @SerializedName("media")

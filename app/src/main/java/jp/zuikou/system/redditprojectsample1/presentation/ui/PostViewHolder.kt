@@ -9,6 +9,7 @@ import jp.zuikou.system.redditprojectsample1.R
 import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.extension.load
 import jp.zuikou.system.redditprojectsample1.util.extension.gone
+import jp.zuikou.system.redditprojectsample1.util.extension.loadImage
 import jp.zuikou.system.redditprojectsample1.util.extension.visible
 import kotlinx.android.synthetic.main.list_item_post.view.*
 import java.text.DateFormat
@@ -29,6 +30,18 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         itemView.textViewCategory.text = post.subredditNamePrefixed
         itemView.votesNumberText.text = post.score.toString()
         itemView.commentNumberText.text = post.numComments.toString() + " comments"
+        post.likes?.let {
+            if(it) {
+                itemView.downvoteImage.loadImage(R.drawable.downvote)
+                itemView.upvoteImage.loadImage(R.drawable.upvote_clicked)
+            } else {
+                itemView.downvoteImage.loadImage(R.drawable.downvote_clicked)
+                itemView.upvoteImage.loadImage(R.drawable.upvote)
+            }
+        }?: kotlin.run {
+            itemView.downvoteImage.loadImage(R.drawable.downvote)
+            itemView.upvoteImage.loadImage(R.drawable.upvote)
+        }
         val imageUrl = post.imagePreview?.let {
             itemView.imageViewThumb.visible()
             if(!it.isNullOrEmpty()){

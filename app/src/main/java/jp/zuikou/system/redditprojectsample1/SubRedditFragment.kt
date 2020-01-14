@@ -22,6 +22,7 @@ import jp.zuikou.system.redditprojectsample1.presentation.ui.BaseFragment
 import jp.zuikou.system.redditprojectsample1.presentation.ui.PostsPagedListAdapter
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.PostsViewModel
+import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import kotlinx.android.synthetic.main.fragment_sub_reddit.*
 import kotlinx.android.synthetic.main.include_posts_list.*
 import org.koin.android.ext.android.getKoin
@@ -81,6 +82,7 @@ class SubRedditFragment : BaseFragment() {
         //GlobalContext.get().koin.setProperty(PROPERTY_PAGED_LIST, getPagedListConfig())
         // Inflate the layout for this fragment
         //SharedPreferenceSingleton.setAccessTokenEntityNull()
+        Timber.d(SharedPreferenceSingleton.getAccessTokenEntity()?.accessToken)
         return inflater.inflate(R.layout.fragment_sub_reddit, container, false)
     }
 
