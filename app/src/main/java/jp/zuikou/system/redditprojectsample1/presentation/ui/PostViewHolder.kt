@@ -35,8 +35,8 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         itemView.commentNumberText.text = post.numComments.toString() + " comments"
 
         itemView.downvoteImage.setOnClickListener {
-            post.subredditId?.let {subredditId->
-                upvoteDownvote.invoke(PostVoteRequest(false, subredditId, position))
+            post.name?.let {name->
+                upvoteDownvote.invoke(PostVoteRequest(false, name, position))
             }
         }
 
