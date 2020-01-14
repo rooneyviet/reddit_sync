@@ -36,13 +36,23 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         itemView.downvoteImage.setOnClickListener {
             post.name?.let {name->
-                upvoteDownvote.invoke(PostVoteRequest(false, name, position))
+                val isDownvote = if((post.likes!=null && post.likes==false)){
+                    null
+                } else {
+                    false
+                }
+                upvoteDownvote.invoke(PostVoteRequest(isDownvote, name, position))
             }
         }
 
         itemView.upvoteImage.setOnClickListener {
             post.name?.let {name->
-                upvoteDownvote.invoke(PostVoteRequest(true, name, position))
+                val isUpvote = if((post.likes!=null && post.likes==true)){
+                    null
+                } else {
+                    true
+                }
+                upvoteDownvote.invoke(PostVoteRequest(isUpvote, name, position))
             }
         }
 

@@ -14,6 +14,6 @@ interface Datasource {
     fun getPagedListMineSubscribers(nextPage: String? = null, limit: Int? = 100): Single<Pair<Pagination, List<RSubSubcribersEntity>>>
 
 
-    fun votePost(isUpvote: Boolean,
+    fun votePost(isUpvote: Boolean?,
                  postId: String): Completable
 }

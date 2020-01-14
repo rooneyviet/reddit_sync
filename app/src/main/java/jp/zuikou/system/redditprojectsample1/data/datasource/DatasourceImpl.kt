@@ -93,12 +93,14 @@ class DatasourceImpl(
                 accessTokenEntity
             }
 
-    override fun votePost(isUpvote: Boolean, postId: String): Completable {
-        val isUpvoteString = if(isUpvote){
-            1
-        } else {
-            -1
-        }
+    override fun votePost(isUpvote: Boolean?, postId: String): Completable {
+        val isUpvoteString = isUpvote?.let {
+            if(isUpvote){
+                1
+            } else {
+                -1
+            }
+        } ?: 0
         if (isAccessTokenIsExpired()) {
             return getAccessToken()
                 .flatMapCompletable {

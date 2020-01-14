@@ -73,7 +73,7 @@ class PostsPagedListAdapter(private val retryCallback: () -> Unit,
             }
 
             override fun areContentsTheSame(oldItem: PostEntity, newItem: PostEntity): Boolean {
-                return oldItem == newItem && oldItem.likes == newItem.likes
+                return oldItem == newItem
             }
         }
     }

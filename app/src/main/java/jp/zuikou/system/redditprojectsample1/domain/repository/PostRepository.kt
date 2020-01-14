@@ -10,6 +10,6 @@ interface PostRepository {
                           type: String? = null,
                           page: String?=null ): Single<Pair<Pagination, List<PostEntity>>>
 
-    fun votePost(isUpvote: Boolean,
+    fun votePost(isUpvote: Boolean?,
                  postId: String): Completable
 }

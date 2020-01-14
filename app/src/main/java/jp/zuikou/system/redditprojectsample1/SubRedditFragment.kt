@@ -14,6 +14,7 @@ import androidx.navigation.navOptions
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.PostVoteRequest
@@ -108,6 +109,7 @@ class SubRedditFragment : BaseFragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(this.context)
         recyclerView.adapter = postsAdapter
+        (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
 
         observerNetworkState()
 
@@ -127,6 +129,7 @@ class SubRedditFragment : BaseFragment() {
         postsViewModel.postVoteLiveData.observe(this, Observer {postVoteRequest->
             postVoteRequest?.let {
                 postsAdapter.currentList?.get(postVoteRequest.clickedPosition)?.likes = postVoteRequest.isUpvote
+                //postsAdapter.submitList(postsAdapter.currentList)
                 postsAdapter.notifyItemChanged(postVoteRequest.clickedPosition)
                 postsViewModel.postVoteLiveData.postValue(null)
 
