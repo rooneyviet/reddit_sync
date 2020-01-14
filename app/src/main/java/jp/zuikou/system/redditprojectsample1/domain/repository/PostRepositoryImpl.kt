@@ -1,5 +1,6 @@
 package jp.zuikou.system.redditprojectsample1.domain.repository
 
+import io.reactivex.Completable
 import io.reactivex.Single
 import jp.zuikou.system.redditprojectsample1.data.datasource.Datasource
 import jp.zuikou.system.redditprojectsample1.domain.Pagination
@@ -13,6 +14,6 @@ class PostRepositoryImpl(private val datasource: Datasource): PostRepository {
     ): Single<Pair<Pagination, List<PostEntity>>> =
         datasource.getPagedListPosts(subReddit, type, page)
 
-    override fun votePost(isUpvote: Boolean, postId: String): Single<Void> =
+    override fun votePost(isUpvote: Boolean, postId: String): Completable =
         datasource.votePost(isUpvote, postId)
 }

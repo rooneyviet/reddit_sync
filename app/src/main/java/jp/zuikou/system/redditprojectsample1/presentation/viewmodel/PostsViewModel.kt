@@ -40,9 +40,10 @@ class PostsViewModel(private var repositoryPresentation: PostRepositoryPresent, 
             .add(postRepositoryDomain.votePost(postVoteRequest.isUpvote, postVoteRequest.postId)
             .subscribeOn(Schedulers.io())
             .subscribe({
-                Timber.d(postVoteRequest.toString())
+                Timber.d("fsssfaohsfdagkle"+postVoteRequest.toString())
                 postVoteLiveData.postValue(postVoteRequest)
             }, {
+                Timber.e(it)
                 //postVoteLiveData.postValue(PostVoteRequest(!isUpvote, postId))
             })
         )

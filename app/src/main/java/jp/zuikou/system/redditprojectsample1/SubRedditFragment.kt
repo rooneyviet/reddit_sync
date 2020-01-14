@@ -128,6 +128,7 @@ class SubRedditFragment : BaseFragment() {
             postVoteRequest?.let {
                 postsAdapter.currentList?.get(postVoteRequest.clickedPosition)?.likes = postVoteRequest.isUpvote
                 postsAdapter.notifyItemChanged(postVoteRequest.clickedPosition)
+                postsViewModel.postVoteLiveData.postValue(null)
 
             }
 

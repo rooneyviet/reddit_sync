@@ -1,5 +1,6 @@
 package jp.zuikou.system.redditprojectsample1.data.service
 
+import io.reactivex.Completable
 import io.reactivex.Single
 import jp.zuikou.system.redditprojectsample1.data.model.response.JsonGenericList
 import jp.zuikou.system.redditprojectsample1.data.model.response.JsonGenericResponseWrapper
@@ -21,5 +22,5 @@ interface PostsServiceAPI {
     @POST("api/vote")
     @FormUrlEncoded
     fun votePost(@Field("dir") isUpvote: Int,
-                 @Field("id") postId: String): Single<Void>
+                 @Field("id") postId: String): Completable
 }

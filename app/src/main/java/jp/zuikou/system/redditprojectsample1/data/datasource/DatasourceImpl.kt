@@ -1,6 +1,7 @@
 package jp.zuikou.system.redditprojectsample1.data.datasource
 
 import android.annotation.SuppressLint
+import io.reactivex.Completable
 import io.reactivex.Single
 import jp.zuikou.system.kintaiapp.presentation.extensions.DateFormat
 import jp.zuikou.system.kintaiapp.presentation.extensions.convertStringToLocalDateTimeJoda
@@ -92,7 +93,7 @@ class DatasourceImpl(
                 accessTokenEntity
             }
 
-    override fun votePost(isUpvote: Boolean, postId: String): Single<Void> {
+    override fun votePost(isUpvote: Boolean, postId: String): Completable {
         val isUpvoteString = if(isUpvote){
             1
         } else {
@@ -100,14 +101,14 @@ class DatasourceImpl(
         }
         if (isAccessTokenIsExpired()) {
             return getAccessToken()
-                .flatMap {
+                .flatMapCompletable {
                     upvoteDownvote(isUpvoteString, postId)
                 }
         }
         return upvoteDownvote(isUpvoteString, postId)
     }
 
-    private fun upvoteDownvote(isUpvote: Int, postId: String): Single<Void>
+    private fun upvoteDownvote(isUpvote: Int, postId: String): Completable
         = service.votePost(isUpvote, postId)
 
 
