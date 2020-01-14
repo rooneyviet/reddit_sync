@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
+import jp.zuikou.system.redditprojectsample1.presentation.data.model.PostVoteRequest
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditSortByDayEnum
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditTypeEnum
 import jp.zuikou.system.redditprojectsample1.presentation.ui.BaseFragment
@@ -61,7 +62,8 @@ class SubRedditFragment : BaseFragment() {
         Timber.d("CLICKED")
         postsViewModel.retry()
     },
-        {post: PostEntity, image: ImageView -> clickItem(post, image) }) }
+        {post: PostEntity, image: ImageView -> clickItem(post, image) },
+        {postVoteRequest: PostVoteRequest -> upvoteDowvoteItem(postVoteRequest)}) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,6 +119,19 @@ class SubRedditFragment : BaseFragment() {
                 }
             }
         })
+
+        observerLikeUpvoteDownvote()
+    }
+
+    private fun observerLikeUpvoteDownvote(){
+        postsViewModel.postVoteLiveData.observe(this, Observer {postVoteRequest->
+            postVoteRequest?.let {
+                postsAdapter.currentList?.get(postVoteRequest.clickedPosition)?.likes = postVoteRequest.isUpvote
+                postsAdapter.notifyItemChanged(postVoteRequest.clickedPosition)
+
+            }
+
+        })
     }
 
     private fun observerNetworkState(){
@@ -171,6 +186,10 @@ class SubRedditFragment : BaseFragment() {
 
     private fun clickItem(post: PostEntity, image: ImageView) {
 
+    }
+
+    private fun upvoteDowvoteItem(postVoteRequest: PostVoteRequest) {
+        postsViewModel.votePost(postVoteRequest)
     }
 
     // TODO: Rename method, update argument and hook method into UI event

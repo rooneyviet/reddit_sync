@@ -8,4 +8,7 @@ interface PostRepository {
     fun getPagedListPosts(subReddit: String? = null,
                           type: String? = null,
                           page: String?=null ): Single<Pair<Pagination, List<PostEntity>>>
+
+    fun votePost(isUpvote: Boolean,
+                 postId: String): Single<Void>
 }

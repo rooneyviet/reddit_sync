@@ -12,4 +12,7 @@ class PostRepositoryImpl(private val datasource: Datasource): PostRepository {
         page: String?
     ): Single<Pair<Pagination, List<PostEntity>>> =
         datasource.getPagedListPosts(subReddit, type, page)
+
+    override fun votePost(isUpvote: Boolean, postId: String): Single<Void> =
+        datasource.votePost(isUpvote, postId)
 }

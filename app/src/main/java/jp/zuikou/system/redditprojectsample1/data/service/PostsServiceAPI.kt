@@ -3,7 +3,6 @@ package jp.zuikou.system.redditprojectsample1.data.service
 import io.reactivex.Single
 import jp.zuikou.system.redditprojectsample1.data.model.response.JsonGenericList
 import jp.zuikou.system.redditprojectsample1.data.model.response.JsonGenericResponseWrapper
-import jp.zuikou.system.redditprojectsample1.data.model.response.JsonPost
 import jp.zuikou.system.redditprojectsample1.data.model.response.JsonPostResponse
 import jp.zuikou.system.redditprojectsample1.data.model.response.subcribers.JsonSubcribersResponse
 import retrofit2.http.*
@@ -17,4 +16,10 @@ interface PostsServiceAPI {
     @GET("subreddits/mine/subscriber")
     fun getPagedListMineSubscribers(@Query("after") nextPage: String? = null,
                           @Query("limit") limit: Int? = 100): Single<JsonGenericResponseWrapper<JsonGenericList<JsonSubcribersResponse>>>
+
+
+    @POST("api/vote")
+    @FormUrlEncoded
+    fun votePost(@Field("dir") isUpvote: Int,
+                 @Field("id") postId: String): Single<Void>
 }

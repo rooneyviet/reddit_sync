@@ -92,6 +92,25 @@ class DatasourceImpl(
                 accessTokenEntity
             }
 
+    override fun votePost(isUpvote: Boolean, postId: String): Single<Void> {
+        val isUpvoteString = if(isUpvote){
+            1
+        } else {
+            -1
+        }
+        if (isAccessTokenIsExpired()) {
+            return getAccessToken()
+                .flatMap {
+                    upvoteDownvote(isUpvoteString, postId)
+                }
+        }
+        return upvoteDownvote(isUpvoteString, postId)
+    }
+
+    private fun upvoteDownvote(isUpvote: Int, postId: String): Single<Void>
+        = service.votePost(isUpvote, postId)
+
+
     private fun isAccessTokenIsExpired(): Boolean {
         val nowDateTime = LocalDateTime.now()
         val savedAccessTokenEntity = SharedPreferenceSingleton.getAccessTokenEntity()

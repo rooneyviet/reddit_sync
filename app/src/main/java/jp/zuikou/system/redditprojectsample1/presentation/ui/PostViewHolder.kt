@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import jp.zuikou.system.redditprojectsample1.R
 import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.extension.load
+import jp.zuikou.system.redditprojectsample1.presentation.data.model.PostVoteRequest
 import jp.zuikou.system.redditprojectsample1.util.extension.gone
 import jp.zuikou.system.redditprojectsample1.util.extension.loadImage
 import jp.zuikou.system.redditprojectsample1.util.extension.visible
@@ -18,7 +19,9 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun bindTo(
         post: PostEntity?,
-        clickItem: (post: PostEntity, image: ImageView) -> Unit
+        clickItem: (post: PostEntity, image: ImageView) -> Unit,
+        upvoteDownvote: (postVoteRequest: PostVoteRequest) -> Unit,
+        position: Int
     ) {
         if (post == null) return
 
@@ -30,6 +33,19 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         itemView.textViewCategory.text = post.subredditNamePrefixed
         itemView.votesNumberText.text = post.score.toString()
         itemView.commentNumberText.text = post.numComments.toString() + " comments"
+
+        itemView.downvoteImage.setOnClickListener {
+            post.subredditId?.let {subredditId->
+                upvoteDownvote.invoke(PostVoteRequest(false, subredditId, position))
+            }
+        }
+
+        itemView.upvoteImage.setOnClickListener {
+            post.name?.let {name->
+                upvoteDownvote.invoke(PostVoteRequest(true, name, position))
+            }
+        }
+
         post.likes?.let {
             if(it) {
                 itemView.downvoteImage.loadImage(R.drawable.downvote)
