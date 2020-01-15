@@ -9,6 +9,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import jp.zuikou.system.redditprojectsample1.R
 
 fun ImageView.load(url: String, loadOnlyFromCache: Boolean = false, onLoadingFinished: () -> Unit = {}) {
     if (url.isEmpty()){
@@ -42,6 +43,7 @@ fun ImageView.load(url: String, loadOnlyFromCache: Boolean = false, onLoadingFin
     }
     Glide.with(this)
         .load(url)
+        .placeholder(R.drawable.image_holder)
         .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).onlyRetrieveFromCache(loadOnlyFromCache))
         .listener(listener)
         .into(this)
