@@ -74,17 +74,20 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageUrl = post.imagePreview?.let {
             itemView.imageViewThumb.visible()
             if(!it.isNullOrEmpty()){
-                it.last().url
+                it.last()
             } else {
                 itemView.imageViewThumb.gone()
-                ""
+                null
             }
         }?: run{
             itemView.imageViewThumb.gone()
-            ""
+            null
         }
 
-        itemView.imageViewThumb.load(imageUrl)
+        if(imageUrl?.url != null && imageUrl.height!=null && imageUrl.width!=null){
+            itemView.imageViewThumb.load(imageUrl.url, imageUrl.width, imageUrl.height)
+        }
+
     }
 
 
