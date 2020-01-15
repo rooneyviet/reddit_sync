@@ -10,9 +10,6 @@ import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.PostsDataSource
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.PostsDataSourceFactory
-import org.koin.core.context.GlobalContext
-import timber.log.Timber
-import kotlin.properties.Delegates
 
 class PostRepositoryPresentImpl(
     private var factory: PostsDataSourceFactory,
@@ -23,6 +20,8 @@ class PostRepositoryPresentImpl(
     private fun getPagedListConfig() =
         PagedList.Config.Builder()
             .setPageSize(15)
+            .setInitialLoadSizeHint(15)
+            .setPrefetchDistance(8)
             .setEnablePlaceholders(false)
             .build()
 
