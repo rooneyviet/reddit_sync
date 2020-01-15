@@ -1,10 +1,13 @@
 package jp.zuikou.system.redditprojectsample1.di
 
+import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import jp.zuikou.system.redditprojectsample1.util.rx.NoInternetConnectionEvent
 import jp.zuikou.system.redditprojectsample1.util.rx.RxBus
+import jp.zuikou.system.redditprojectsample1.util.rx.UnAuthenEvent
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
+import java.net.HttpURLConnection
 
 class RetrofitException private constructor(
     message: String?,
@@ -43,7 +46,8 @@ class RetrofitException private constructor(
          * An internal error occurred while attempting to execute a request. It is best practice to
          * re-throw this exception so your application crashes.
          */
-        UNEXPECTED
+        UNEXPECTED,
+        UNAUTHORIZED
     }
 
     companion object {
@@ -59,24 +63,31 @@ class RetrofitException private constructor(
         fun unexpectedError(exception: Throwable): RetrofitException {
             return RetrofitException(exception.message, null, null, Kind.UNEXPECTED, exception)
         }
+        fun unauthorizedError(exception: Throwable): RetrofitException {
+            return RetrofitException(exception.message, null, null, Kind.UNAUTHORIZED, exception)
+        }
 
         fun asRetrofitException(throwable: Throwable): RetrofitException {
             if (throwable is RetrofitException) {
-                RxBus.send(NoInternetConnectionEvent("RetrofitException JUST FUCKING LOGIN!!!!"))
+                RxBus.send(NoInternetConnectionEvent("RetrofitException"))
                 return throwable
             }
             // We had non-200 http error
             if (throwable is HttpException) {
-                RxBus.send(NoInternetConnectionEvent("HttpException JUST FUCKING LOGIN!!!!"))
+                RxBus.send(NoInternetConnectionEvent("HttpException No Internet"))
                 val response = throwable.response()
+                if(response.code() == HttpURLConnection.HTTP_UNAUTHORIZED && !SharedPreferenceSingleton.isAccessTokenSaved()){
+                    RxBus.send(UnAuthenEvent("HTTP_UNAUTHORIZED UNAUTHORIZED!!!"))
+                    return unauthorizedError(throwable)
+                }
                 return httpError(response.raw().request().url().toString(), response, throwable)
             }
             // A network error happened
             return if (throwable is IOException) {
-                RxBus.send(NoInternetConnectionEvent("IOException JUST FUCKING LOGIN!!!!"))
+                RxBus.send(NoInternetConnectionEvent("IOException JUST LOGIN!!!"))
                 networkError(throwable)
             } else {
-                RxBus.send(NoInternetConnectionEvent("ELSE JUST FUCKING LOGIN!!!!"))
+                RxBus.send(NoInternetConnectionEvent("ELSE EXCEPTION"))
                 unexpectedError(throwable)
             }
             // We don't know what happened. We need to simply convert to an unknown error

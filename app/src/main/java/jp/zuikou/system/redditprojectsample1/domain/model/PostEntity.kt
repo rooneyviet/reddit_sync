@@ -33,7 +33,7 @@ data class PostEntity (
     val isRobotIndexable: Boolean?,
     val isSelf: Boolean?,
     val isVideo: Boolean?,
-    val likes: Any?,
+    var likes: Boolean?,
     val locked: Boolean?,
     val media: Any?,
     val mediaOnly: Boolean?,

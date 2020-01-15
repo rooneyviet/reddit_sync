@@ -16,12 +16,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
+import jp.zuikou.system.redditprojectsample1.presentation.data.model.PostVoteRequest
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditSortByDayEnum
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditTypeEnum
 import jp.zuikou.system.redditprojectsample1.presentation.ui.BaseFragment
 import jp.zuikou.system.redditprojectsample1.presentation.ui.PostsPagedListAdapter
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.PostsViewModel
+import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import kotlinx.android.synthetic.main.fragment_sub_reddit.*
 import kotlinx.android.synthetic.main.include_posts_list.*
 import org.koin.android.ext.android.getKoin
@@ -60,7 +62,8 @@ class SubRedditFragment : BaseFragment() {
         Timber.d("CLICKED")
         postsViewModel.retry()
     },
-        {post: PostEntity, image: ImageView -> clickItem(post, image) }) }
+        {post: PostEntity, image: ImageView -> clickItem(post, image) },
+        {postVoteRequest: PostVoteRequest -> upvoteDowvoteItem(postVoteRequest)}) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +84,7 @@ class SubRedditFragment : BaseFragment() {
         //GlobalContext.get().koin.setProperty(PROPERTY_PAGED_LIST, getPagedListConfig())
         // Inflate the layout for this fragment
         //SharedPreferenceSingleton.setAccessTokenEntityNull()
+        Timber.d(SharedPreferenceSingleton.getAccessTokenEntity()?.accessToken)
         return inflater.inflate(R.layout.fragment_sub_reddit, container, false)
     }
 
@@ -104,6 +108,7 @@ class SubRedditFragment : BaseFragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(this.context)
         recyclerView.adapter = postsAdapter
+        //(recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
 
         observerNetworkState()
 
@@ -114,6 +119,21 @@ class SubRedditFragment : BaseFragment() {
                     recyclerView.scrollToPosition(0)
                 }
             }
+        })
+
+        observerLikeUpvoteDownvote()
+    }
+
+    private fun observerLikeUpvoteDownvote(){
+        postsViewModel.postVoteLiveData.observe(this, Observer {postVoteRequest->
+            postVoteRequest?.let {
+                postsAdapter.currentList?.get(postVoteRequest.clickedPosition)?.likes = postVoteRequest.isUpvote
+                //postsAdapter.submitList(postsAdapter.currentList)
+                postsAdapter.notifyItemChanged(postVoteRequest.clickedPosition)
+                postsViewModel.postVoteLiveData.postValue(null)
+
+            }
+
         })
     }
 
@@ -169,6 +189,10 @@ class SubRedditFragment : BaseFragment() {
 
     private fun clickItem(post: PostEntity, image: ImageView) {
 
+    }
+
+    private fun upvoteDowvoteItem(postVoteRequest: PostVoteRequest) {
+        postsViewModel.votePost(postVoteRequest)
     }
 
     // TODO: Rename method, update argument and hook method into UI event

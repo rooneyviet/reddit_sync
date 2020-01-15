@@ -17,6 +17,7 @@ import jp.zuikou.system.redditprojectsample1.domain.usecase.GetSubRedditsUseCase
 import jp.zuikou.system.redditprojectsample1.domain.usecase.UseCase
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.PostsDataSourceFactory
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.SubRedditsDataSourceFactory
+import jp.zuikou.system.redditprojectsample1.presentation.data.model.PostVoteRequest
 import jp.zuikou.system.redditprojectsample1.presentation.navigation_drawer.DrawerLayoutPagedListAdapter
 import jp.zuikou.system.redditprojectsample1.presentation.repository.PaginationRepository
 import jp.zuikou.system.redditprojectsample1.presentation.repository.PostRepositoryPresent
@@ -63,7 +64,7 @@ val repositoryModule = module {
 
 val postsModule: Module = module {
     factory<Datasource> { DatasourceImpl(get(), get()) }
-    viewModel { PostsViewModel(get()) }
+    viewModel { PostsViewModel(get(), get()) }
     factory<PostRepositoryPresent> {
         PostRepositoryPresentImpl(
             get(),
@@ -80,9 +81,12 @@ val postsModule: Module = module {
     factory { PostsDataSourceFactory(get(named(USE_CASE_POST))) }
 
     factory { (retryCallback: () -> Unit,
-                  clickItem: (post: PostEntity, image: ImageView) -> Unit) ->
-        PostsPagedListAdapter(retryCallback, clickItem)
+                  clickItem: (post: PostEntity, image: ImageView) -> Unit,
+                  upvoteDownvote: (postVoteRequest: PostVoteRequest) -> Unit) ->
+        PostsPagedListAdapter(retryCallback, clickItem, upvoteDownvote)
     }
+
+
 
 }
 
