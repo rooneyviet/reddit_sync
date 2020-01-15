@@ -60,7 +60,6 @@ class SubRedditFragment : BaseFragment() {
 
 
     private val postsAdapter: PostsPagedListAdapter by inject{ parametersOf({
-        Timber.d("CLICKED")
         postsViewModel.retry()
     },
         {post: PostEntity, image: ImageView -> clickItem(post, image) },
@@ -133,9 +132,7 @@ class SubRedditFragment : BaseFragment() {
                 //postsAdapter.submitList(postsAdapter.currentList)
                 postsAdapter.notifyItemChanged(postVoteRequest.clickedPosition)
                 postsViewModel.postVoteLiveData.postValue(null)
-
             }
-
         })
     }
 
@@ -162,14 +159,11 @@ class SubRedditFragment : BaseFragment() {
             })
     }
 
-
-
     private fun initSwipeToRefresh() {
         swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.colorAccent))
         swipeRefreshLayout.setOnRefreshListener {
             observePostData()
         }
-
     }
 
     private fun getPagedListConfig() =
@@ -177,8 +171,6 @@ class SubRedditFragment : BaseFragment() {
             .setPageSize(15)
             .setEnablePlaceholders(false)
             .build()
-
-
 
     override fun setInitialLoadingState(networkState: NetworkState?) {
         super.setInitialLoadingState(networkState)
@@ -228,7 +220,6 @@ class SubRedditFragment : BaseFragment() {
      * for more information.
      */
     interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         fun onFragmentInteraction(uri: Uri)
     }
 
