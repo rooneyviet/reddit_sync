@@ -26,6 +26,7 @@ import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.PostsViewMod
 import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import kotlinx.android.synthetic.main.fragment_sub_reddit.*
 import kotlinx.android.synthetic.main.include_posts_list.*
+import kotlinx.android.synthetic.main.list_item_network_state.*
 import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -90,6 +91,7 @@ class SubRedditFragment : BaseFragment() {
 
     override fun refreshFragment() {
         observePostData(isReset = true)
+        observerNetworkState()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -110,7 +112,7 @@ class SubRedditFragment : BaseFragment() {
         recyclerView.adapter = postsAdapter
         //(recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
 
-        observerNetworkState()
+        //observerNetworkState()
 
         //observePostData()
         postsAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -141,7 +143,7 @@ class SubRedditFragment : BaseFragment() {
         postsViewModel.getNetworkState().observe(this,
             Observer<NetworkState> {
                 if (postsAdapter.currentList.isNullOrEmpty() || swipeRefreshLayout.isRefreshing){
-                    //setInitialLoadingState(it)
+                    setInitialLoadingState(it)
                 }else {
                     postsAdapter.setNetworkState(it)
                 }
@@ -178,14 +180,14 @@ class SubRedditFragment : BaseFragment() {
 
 
 
-    /*override fun setInitialLoadingState(networkState: NetworkState?) {
+    override fun setInitialLoadingState(networkState: NetworkState?) {
         super.setInitialLoadingState(networkState)
         if (swipeRefreshLayout.isRefreshing){
             swipeRefreshLayout.isRefreshing = networkState == NetworkState.LOADING
             progressBarLoading.visibility = View.GONE
         }
-        postsAdapter.setNetworkState(NetworkState.LOADED)
-    }*/
+        //postsAdapter.setNetworkState(NetworkState.LOADED)
+    }
 
     private fun clickItem(post: PostEntity, image: ImageView) {
 

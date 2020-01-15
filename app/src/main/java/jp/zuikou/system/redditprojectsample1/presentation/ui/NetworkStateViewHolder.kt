@@ -24,7 +24,7 @@ class NetworkStateViewHolder(val view: View, private val retryCallback: () -> Un
         //itemView.textViewError.visibility = if (networkState?.failure != null) View.VISIBLE else View.GONE
 
 
-        itemView.textViewError.visibility = if (networkState != null && networkState == NetworkState.NO_INTERNET) View.VISIBLE else View.GONE
+        //itemView.textViewError.visibility = if (networkState != null && networkState == NetworkState.NO_INTERNET) View.VISIBLE else View.GONE
 
         //loading and retry
         itemView.buttonRetry.visibility = if (networkState == NetworkState.NO_INTERNET) View.VISIBLE else View.GONE
