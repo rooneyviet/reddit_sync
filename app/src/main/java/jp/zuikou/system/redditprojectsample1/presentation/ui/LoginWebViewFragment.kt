@@ -79,7 +79,7 @@ class LoginWebViewFragment : BaseFragment() {
                         return true
                     }
                 }
-                return false
+                return super.shouldOverrideUrlLoading(view, request)
             }
         }
 
