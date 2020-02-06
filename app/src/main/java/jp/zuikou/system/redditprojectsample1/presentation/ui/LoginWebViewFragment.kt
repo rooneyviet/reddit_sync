@@ -71,9 +71,10 @@ class LoginWebViewFragment : BaseFragment() {
                 val state = request?.url?.getQueryParameter("state")
                 if (state == STATE) {
                     val code = request?.url?.getQueryParameter("code")
-                    //getAccessToken(code)
-                    getAccessToken(code)
-                    return true
+                    if(code!=null){
+                        getAccessToken(code)
+                        return true
+                    }
                 }
                 return false
             }
