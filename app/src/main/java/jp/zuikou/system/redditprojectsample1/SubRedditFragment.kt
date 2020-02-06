@@ -88,8 +88,8 @@ class SubRedditFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_sub_reddit, container, false)
     }
 
-    override fun refreshFragment() {
-        observePostData(isReset = true)
+    override fun refreshFragment(isReset: Boolean) {
+        observePostData(isReset = isReset)
         observerNetworkState()
     }
 
@@ -114,6 +114,8 @@ class SubRedditFragment : BaseFragment() {
         //observerNetworkState()
 
         //observePostData()
+
+        refreshFragment(false)
         postsAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 if (positionStart == 0) {

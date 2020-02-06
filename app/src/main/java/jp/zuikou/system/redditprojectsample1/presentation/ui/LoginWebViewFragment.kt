@@ -22,8 +22,11 @@ import jp.zuikou.system.redditprojectsample1.config.AppConfig.SCOPE
 import jp.zuikou.system.redditprojectsample1.config.AppConfig.STATE
 import jp.zuikou.system.redditprojectsample1.domain.repository.LoginRepository
 import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
+import jp.zuikou.system.redditprojectsample1.util.rx.LoginLogoutChangeEvent
+import jp.zuikou.system.redditprojectsample1.util.rx.RxBus
 import kotlinx.android.synthetic.main.fragment_login_web_view.*
 import org.koin.android.ext.android.inject
+import timber.log.Timber
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -81,7 +84,7 @@ class LoginWebViewFragment : BaseFragment() {
 
         onbackPressedListener()
     }
-    override fun refreshFragment() {
+    override fun refreshFragment(isReset: Boolean) {
 
     }
 
@@ -110,7 +113,9 @@ class LoginWebViewFragment : BaseFragment() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
+                Timber.d("KLSFHLHFLF ${it.accessToken}")
                 loginViewModel.authenticate(true)
+                RxBus.send(LoginLogoutChangeEvent(true))
                 SharedPreferenceSingleton.setAccessTokenEntity(it)
                 findNavController().popBackStack(R.id.subRedditFragment, false)
             },{
