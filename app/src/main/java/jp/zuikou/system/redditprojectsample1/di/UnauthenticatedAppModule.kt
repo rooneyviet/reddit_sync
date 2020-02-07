@@ -92,12 +92,12 @@ val postsModule: Module = module {
 
 val mineSubcribersModule: Module = module {
     //single<Datasource> { DatasourceImpl(get()) }
-    single { MainViewModel(get()) }
-    single<PaginationRepository<RSubSubcribersEntity>> { SubcribersRepositoryPresentImpl(get()) }
-    single<SubRedditsRepository> { SubRedditsRepositoryImpl(get()) }
-    single<GetSubRedditsUseCase>(named(USE_CASE_SUBSCRIBER)) { GetSubRedditsUseCase(get()) }
+    viewModel { MainViewModel(get()) }
+    factory <PaginationRepository<RSubSubcribersEntity>> { SubcribersRepositoryPresentImpl(get()) }
+    factory<SubRedditsRepository> { SubRedditsRepositoryImpl(get()) }
+    factory<GetSubRedditsUseCase>(named(USE_CASE_SUBSCRIBER)) { GetSubRedditsUseCase(get()) }
 
-    single { SubRedditsDataSourceFactory(get(named(USE_CASE_SUBSCRIBER))) }
+    factory { SubRedditsDataSourceFactory(get(named(USE_CASE_SUBSCRIBER))) }
 
     factory { (subClicked: (subreddit: String) -> Unit) ->
         DrawerLayoutPagedListAdapter(subClicked)

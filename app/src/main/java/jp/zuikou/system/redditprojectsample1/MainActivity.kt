@@ -53,10 +53,12 @@ class MainActivity : BaseAuthActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initRecyclerView()
         setupNavigation()
         setupNightMode()
         initAndObserveData()
         setupDrawerAction()
+        subClicked()
     }
 
     private fun setupDrawerAction(){
@@ -112,11 +114,13 @@ class MainActivity : BaseAuthActivity() {
         }
     }
 
-    private fun initAndObserveData(){
+    private fun initRecyclerView(){
         lst_menu_items_recyclerview.layoutManager = LinearLayoutManager(this)
         lst_menu_items_recyclerview.adapter = drawerPagedListAdapter
+    }
 
-        mainViewModel.getSubcribersList().observe(this,
+    private fun initAndObserveData(isReset: Boolean = false){
+        mainViewModel.getSubcribersList(isReset).observe(this,
             Observer<PagedList<RSubSubcribersEntity>> {
                 drawerPagedListAdapter.submitList(it)
             })
@@ -126,7 +130,6 @@ class MainActivity : BaseAuthActivity() {
 
             })
 
-        subClicked()
     }
 
     private fun subClicked(subreddit: String = "") {
@@ -194,6 +197,21 @@ class MainActivity : BaseAuthActivity() {
                 SharedPreferenceSingleton.setCurrentThemePref(ThemeHelper.LIGHT_MODE)
                 ThemeHelper.applyTheme(ThemeHelper.LIGHT_MODE)
             }
+        }
+    }
+
+    override fun refreshLoginStatus(isLogin: Boolean?) {
+        isLogin?.let {
+            val host: MainHostFragment = supportFragmentManager
+                .findFragmentById(R.id.myNavHostFragment) as MainHostFragment
+
+            val childFragments = host.childFragmentManager.fragments
+            childFragments.forEach { fragment ->
+                if (fragment is SubRedditFragment && fragment.isVisible) {
+                    fragment.refreshFragment(true)
+                }
+            }
+            initAndObserveData(isReset = true)
         }
     }
 

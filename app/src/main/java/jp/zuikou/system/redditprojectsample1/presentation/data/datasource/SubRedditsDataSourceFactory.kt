@@ -6,14 +6,13 @@ import io.reactivex.disposables.CompositeDisposable
 import jp.zuikou.system.redditprojectsample1.domain.Pagination
 import jp.zuikou.system.redditprojectsample1.domain.model.RSubSubcribersEntity
 import jp.zuikou.system.redditprojectsample1.domain.usecase.GetSubRedditsUseCase
-import kotlin.properties.Delegates
 
 class SubRedditsDataSourceFactory (private val getSubcriberSubRedditUseCase:
                                    GetSubRedditsUseCase
 )
     : DataSource.Factory<Pagination, RSubSubcribersEntity>() {
 
-    var compositeDisposable: CompositeDisposable by Delegates.notNull()
+    var compositeDisposable = CompositeDisposable()
 
     val dataSource = MutableLiveData<SubRedditsDataSource>()
 

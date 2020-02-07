@@ -9,8 +9,9 @@ import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditRe
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditSortByDayEnum
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditTypeEnum
 import jp.zuikou.system.redditprojectsample1.presentation.repository.PaginationRepository
+import org.koin.core.context.GlobalContext
 
-class MainViewModel (private val subcribersRepositoryPresent: PaginationRepository<RSubSubcribersEntity>): BaseViewModel() {
+class MainViewModel (private var subcribersRepositoryPresent: PaginationRepository<RSubSubcribersEntity>): BaseViewModel() {
     init {
         subcribersRepositoryPresent.setCompositeDisposable(compositeDisposable)
     }
@@ -27,7 +28,12 @@ class MainViewModel (private val subcribersRepositoryPresent: PaginationReposito
     }
 
 
-    fun getSubcribersList(): LiveData<PagedList<RSubSubcribersEntity>> = subcribersRepositoryPresent.getList()
+    fun getSubcribersList(isReset: Boolean = false): LiveData<PagedList<RSubSubcribersEntity>> {
+        if(isReset){
+            subcribersRepositoryPresent = GlobalContext.get().koin.get()
+        }
+        return subcribersRepositoryPresent.getList()
+    }
 
     fun getNetworkStateList(): LiveData<NetworkState> = subcribersRepositoryPresent.getNetworkState()
 

@@ -9,6 +9,7 @@ import com.uber.autodispose.kotlin.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.LoginViewModel
+import jp.zuikou.system.redditprojectsample1.util.rx.LoginLogoutChangeEvent
 import jp.zuikou.system.redditprojectsample1.util.rx.RxBus
 import jp.zuikou.system.redditprojectsample1.util.rx.UnAuthenEvent
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -21,6 +22,7 @@ open abstract class BaseAuthActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         listenChangeUnauthenEvent()
+        listenChangeLoginLogoutEvent()
     }
 
     private fun listenChangeUnauthenEvent() {
@@ -37,4 +39,23 @@ open abstract class BaseAuthActivity : BaseActivity() {
                 }
             )
     }
+
+    private fun listenChangeLoginLogoutEvent() {
+        RxBus.toObservable(LoginLogoutChangeEvent::class.java)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .autoDisposable(AndroidLifecycleScopeProvider.from(this, Lifecycle.Event.ON_DESTROY))
+            .subscribe(
+                {
+                    it.isLogin?.let {
+                        refreshLoginStatus(true)
+                    }
+                },
+                {
+                    Timber.e(it)
+                }
+            )
+    }
+
+    abstract fun refreshLoginStatus(isLogin: Boolean?)
 }
