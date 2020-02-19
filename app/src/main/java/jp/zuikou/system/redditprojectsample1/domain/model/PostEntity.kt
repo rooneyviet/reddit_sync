@@ -35,7 +35,6 @@ data class PostEntity (
     val isVideo: Boolean?,
     var likes: Boolean?,
     val locked: Boolean?,
-    val media: Any?,
     val mediaOnly: Boolean?,
     val name: String?,
     val noFollow: Boolean?,
@@ -72,5 +71,7 @@ data class PostEntity (
     val visited: Boolean?,
     val whitelistStatus: String?,
     val wls: Int?,
-    val imagePreview: List<ImageEntity>? = null
+    val imagePreview: List<ImageEntity>? = null,
+    val redditVideoEntity: RedditVideoEntity? = null,
+    val isGif: Boolean = false
     )

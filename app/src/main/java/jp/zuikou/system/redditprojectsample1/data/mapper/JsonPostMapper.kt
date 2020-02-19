@@ -11,6 +11,8 @@ object JsonPostMapper : Mapper<JsonPostResponse, PostEntity>() {
     }
 
     override fun transformTo(source: JsonPostResponse): PostEntity {
+        var mIsGif = false
+
         val imagePreview = mutableListOf<ImageEntity>()
         source.preview?.images?.forEach { content ->
             content.image?.let { image ->
@@ -21,8 +23,36 @@ object JsonPostMapper : Mapper<JsonPostResponse, PostEntity>() {
                 imagePreview.addAll(JsonImageMapper.transformToList(images))
             }
         }
+        /*source.preview?.images?.firstOrNull()?.variants?.gif?.let {
+            imagePreview.clear()
+            mIsGif = true
+            it.source?.let { image ->
+                if (image.url.isNullOrEmpty()) return@let
+                imagePreview.add(JsonImageMapper.transformTo(image))
+            }
+            it.resolutions?.let { images ->
+                imagePreview.addAll(JsonImageMapper.transformToList(images))
+            }
+        }*/
         val date = if (source.createdUtc == null) Date() else Date(source.createdUtc * 1000)
 
+        val mRedditVideo = if(source.media?.jsonRedditVideo!=null){
+             JsonRedditVideoMapper.transformTo(source.media.jsonRedditVideo)
+        } else if(source.preview?.images?.firstOrNull()?.variants?.gif?.source?.url.isNullOrEmpty()){
+            mIsGif = true
+             JsonRedditVideoMapper.transformFromGifMp4ToRedditVideo(source.preview?.images?.firstOrNull()?.variants?.gif?.source!!)
+        } else null
+        /*val mRedditVideo = source.media?.jsonRedditVideo?.let {
+            JsonRedditVideoMapper.transformTo(it)
+        } ?: run{
+            source.preview?.images?.firstOrNull()?.variants?.gif?.let {
+                mIsGif = true
+                it.source?.let { image ->
+                    if (image.url.isNullOrEmpty()) return@let
+                    JsonRedditVideoMapper.transformFromGifMp4ToRedditVideo(it.source)
+                }?: null
+            }
+        }*/
 
         /* return Post(title = source.title ?: "", imagePreview = imagePreview,
              author = Author(name = source.authorName ?: ""), date = date, text = source.text ?: "",
@@ -61,7 +91,6 @@ object JsonPostMapper : Mapper<JsonPostResponse, PostEntity>() {
             isVideo = source.isVideo,
             likes = source.likes,
             locked = source.locked,
-            media = source.media,
             mediaOnly = source.mediaOnly,
             name = source.name,
             noFollow = source.noFollow,
@@ -98,7 +127,9 @@ object JsonPostMapper : Mapper<JsonPostResponse, PostEntity>() {
             visited = source.visited,
             whitelistStatus = source.parentWhitelistStatus,
             wls = source.wls,
-            imagePreview = imagePreview
+            imagePreview = imagePreview,
+            redditVideoEntity = mRedditVideo,
+            isGif = mIsGif
         )
     }
 }

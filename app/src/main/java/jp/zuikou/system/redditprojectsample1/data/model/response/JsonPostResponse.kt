@@ -69,7 +69,7 @@ data class JsonPostResponse(
     @SerializedName("locked")
     val locked: Boolean?,
     @SerializedName("media")
-    val media: Any?,
+    val media: JsonMedia?,
     @SerializedName("media_only")
     val mediaOnly: Boolean?,
     @SerializedName("name")

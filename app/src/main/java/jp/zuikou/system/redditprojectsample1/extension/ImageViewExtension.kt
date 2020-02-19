@@ -6,11 +6,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 
-fun ImageView.load(url: String, mWidth: Int, mHeight: Int, loadOnlyFromCache: Boolean = false, onLoadingFinished: () -> Unit = {}) {
+fun ImageView.load(url: String, mWidth: Int, mHeight: Int, isGif: Boolean = false, loadOnlyFromCache: Boolean = false, onLoadingFinished: () -> Unit = {}) {
     if (url.isEmpty()){
         Glide.with(this).clear(this)
         return
@@ -40,10 +41,44 @@ fun ImageView.load(url: String, mWidth: Int, mHeight: Int, loadOnlyFromCache: Bo
             return false
         }
     }
-    Glide.with(this)
-        .load(url)
-        .override(mWidth, mHeight)
-        .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).onlyRetrieveFromCache(loadOnlyFromCache))
-        .listener(listener)
-        .into(this)
+
+    val gifListener = object : RequestListener<GifDrawable> {
+        override fun onLoadFailed(
+            e: GlideException?,
+            model: Any?,
+            target: Target<GifDrawable>?,
+            isFirstResource: Boolean
+        ): Boolean {
+            onLoadingFinished()
+            return false
+        }
+
+        override fun onResourceReady(
+            resource: GifDrawable?,
+            model: Any?,
+            target: Target<GifDrawable>?,
+            dataSource: DataSource?,
+            isFirstResource: Boolean
+        ): Boolean {
+            onLoadingFinished()
+            return false
+        }
+
+    }
+    if(isGif){
+        Glide.with(this)
+            .asGif()
+            .load(url)
+            .override(mWidth, mHeight)
+            .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).onlyRetrieveFromCache(loadOnlyFromCache))
+            .listener(gifListener)
+            .into(this)
+    } else {
+        Glide.with(this)
+            .load(url)
+            .override(mWidth, mHeight)
+            .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).onlyRetrieveFromCache(loadOnlyFromCache))
+            .listener(listener)
+            .into(this)
+    }
 }
