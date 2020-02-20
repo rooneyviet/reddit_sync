@@ -32,7 +32,7 @@ data class PostEntity (
     val isRedditMediaDomain: Boolean?,
     val isRobotIndexable: Boolean?,
     val isSelf: Boolean?,
-    val isVideo: Boolean?,
+    val isVideo: Boolean  = false,
     var likes: Boolean?,
     val locked: Boolean?,
     val mediaOnly: Boolean?,

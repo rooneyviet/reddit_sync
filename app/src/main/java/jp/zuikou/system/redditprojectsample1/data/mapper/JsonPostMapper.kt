@@ -38,9 +38,9 @@ object JsonPostMapper : Mapper<JsonPostResponse, PostEntity>() {
 
         val mRedditVideo = if(source.media?.jsonRedditVideo!=null){
              JsonRedditVideoMapper.transformTo(source.media.jsonRedditVideo)
-        } else if(source.preview?.images?.firstOrNull()?.variants?.gif?.source != null){
+        } else if(source.preview?.images?.firstOrNull()?.variants?.gif?.source != null && source.preview?.images?.firstOrNull()?.variants?.mp4?.source != null){
             mIsGif = true
-             JsonRedditVideoMapper.transformFromGifMp4ToRedditVideo(source.preview?.images?.firstOrNull()?.variants?.gif?.source!!)
+             JsonRedditVideoMapper.transformFromGifMp4ToRedditVideo(source.preview?.images?.firstOrNull()?.variants?.mp4?.source!!)
         } else null
         /*val mRedditVideo = source.media?.jsonRedditVideo?.let {
             JsonRedditVideoMapper.transformTo(it)
@@ -88,7 +88,7 @@ object JsonPostMapper : Mapper<JsonPostResponse, PostEntity>() {
             isRedditMediaDomain = source.isRedditMediaDomain,
             isRobotIndexable = source.isRobotIndexable,
             isSelf = source.isSelf,
-            isVideo = source.isVideo,
+            isVideo = source.isVideo?: false,
             likes = source.likes,
             locked = source.locked,
             mediaOnly = source.mediaOnly,

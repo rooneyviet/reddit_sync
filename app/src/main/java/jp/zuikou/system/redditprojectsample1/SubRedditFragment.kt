@@ -14,6 +14,7 @@ import androidx.navigation.navOptions
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.master.exoplayer.MasterExoPlayerHelper
 import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.PostVoteRequest
@@ -107,8 +108,15 @@ class SubRedditFragment : BaseFragment() {
 
         initSwipeToRefresh()
 
+        val masterExoPlayerHelper =this.activity?.let {
+            MasterExoPlayerHelper(mContext = it, id = R.id.masterExoPlayer)
+        }
+        masterExoPlayerHelper?.makeLifeCycleAware(this)
+
         recyclerView.layoutManager = LinearLayoutManager(this.context)
         recyclerView.adapter = postsAdapter
+
+        masterExoPlayerHelper?.attachToRecyclerView(recyclerView)
         //(recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
 
         //observerNetworkState()

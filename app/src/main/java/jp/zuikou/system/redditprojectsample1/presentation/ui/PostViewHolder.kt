@@ -13,7 +13,17 @@ import jp.zuikou.system.redditprojectsample1.util.extension.clickOnAuthenContent
 import jp.zuikou.system.redditprojectsample1.util.extension.gone
 import jp.zuikou.system.redditprojectsample1.util.extension.loadImage
 import jp.zuikou.system.redditprojectsample1.util.extension.visible
-import kotlinx.android.synthetic.main.list_item_post.view.*
+import kotlinx.android.synthetic.main.list_item_post.view.commentNumberText
+import kotlinx.android.synthetic.main.list_item_post.view.downvoteImage
+import kotlinx.android.synthetic.main.list_item_post.view.imageViewThumb
+import kotlinx.android.synthetic.main.list_item_post.view.textViewAuthor
+import kotlinx.android.synthetic.main.list_item_post.view.textViewCategory
+import kotlinx.android.synthetic.main.list_item_post.view.textViewTime
+import kotlinx.android.synthetic.main.list_item_post.view.textViewTitle
+import kotlinx.android.synthetic.main.list_item_post.view.upvoteImage
+import kotlinx.android.synthetic.main.list_item_post.view.votesNumberText
+import kotlinx.android.synthetic.main.list_item_post_vote_on_the_right_layout.view.*
+import timber.log.Timber
 import java.text.DateFormat
 
 class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -86,6 +96,14 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         if(imageUrl?.url != null && imageUrl.height!=null && imageUrl.width!=null){
             itemView.imageViewThumb.load(imageUrl.url, imageUrl.width, imageUrl.height)
+        }
+
+        if(post.isGif){
+            Timber.d("PAFAPFJPSP "+post.redditVideoEntity?.dashUrl)
+            itemView.masterExoPlayer.visibility = View.VISIBLE
+            itemView.masterExoPlayer.url = post.redditVideoEntity?.dashUrl
+        } else {
+            itemView.masterExoPlayer.visibility = View.GONE
         }
 
     }
