@@ -38,7 +38,7 @@ object JsonPostMapper : Mapper<JsonPostResponse, PostEntity>() {
 
         val mRedditVideo = if(source.media?.jsonRedditVideo!=null){
              JsonRedditVideoMapper.transformTo(source.media.jsonRedditVideo)
-        } else if(source.preview?.images?.firstOrNull()?.variants?.gif?.source?.url.isNullOrEmpty()){
+        } else if(source.preview?.images?.firstOrNull()?.variants?.gif?.source != null){
             mIsGif = true
              JsonRedditVideoMapper.transformFromGifMp4ToRedditVideo(source.preview?.images?.firstOrNull()?.variants?.gif?.source!!)
         } else null
