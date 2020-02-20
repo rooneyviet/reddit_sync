@@ -24,9 +24,9 @@ object JsonRedditVideoMapper: Mapper<JsonRedditVideo, RedditVideoEntity>() {
 
     fun transformFromGifMp4ToRedditVideo(source: JsonImage): RedditVideoEntity =
         RedditVideoEntity(
-            dashUrl =  source.url,
+            dashUrl =  null,
             duration = null,
-            fallbackUrl = null,
+            fallbackUrl = source.url,
             height = source.height,
             hlsUrl = null,
             isGif = true,

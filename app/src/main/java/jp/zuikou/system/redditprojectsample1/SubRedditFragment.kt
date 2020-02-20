@@ -109,7 +109,7 @@ class SubRedditFragment : BaseFragment() {
         initSwipeToRefresh()
 
         val masterExoPlayerHelper =this.activity?.let {
-            MasterExoPlayerHelper(mContext = it, id = R.id.masterExoPlayer)
+            MasterExoPlayerHelper(mContext = it, id = R.id.masterExoPlayer, useController = true)
         }
         masterExoPlayerHelper?.makeLifeCycleAware(this)
 

@@ -6,7 +6,7 @@ data class RedditVideoEntity (
     val fallbackUrl: String?,
     val height: Int?,
     val hlsUrl: String?,
-    val isGif: Boolean?,
+    val isGif: Boolean = false,
     val scrubberMediaUrl: String?,
     val transcodingStatus: String?,
     val width: Int?

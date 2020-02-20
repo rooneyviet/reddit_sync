@@ -15,7 +15,7 @@ data class JsonRedditVideo(
     @SerializedName("hls_url")
     val hlsUrl: String?,
     @SerializedName("is_gif")
-    val isGif: Boolean?,
+    val isGif: Boolean = false,
     @SerializedName("scrubber_media_url")
     val scrubberMediaUrl: String?,
     @SerializedName("transcoding_status")
