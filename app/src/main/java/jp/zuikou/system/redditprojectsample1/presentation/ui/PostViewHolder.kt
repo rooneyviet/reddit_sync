@@ -57,7 +57,7 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 } else {
                     false
                 }
-                upvoteDownvote.invoke(PostVoteRequest(isDownvote, name, position))
+                upvoteDownvote.invoke(PostVoteRequest(isDownvote, name, position, post))
             }
         })
 
@@ -68,7 +68,7 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                 } else {
                     true
                 }
-                upvoteDownvote.invoke(PostVoteRequest(isUpvote, name, position))
+                upvoteDownvote.invoke(PostVoteRequest(isUpvote, name, position, post))
             }
         })
 

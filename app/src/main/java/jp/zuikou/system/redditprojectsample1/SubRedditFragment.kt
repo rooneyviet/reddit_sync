@@ -109,7 +109,7 @@ class SubRedditFragment : BaseFragment() {
         initSwipeToRefresh()
 
         val masterExoPlayerHelper =this.activity?.let {
-            MasterExoPlayerHelper(mContext = it, id = R.id.masterExoPlayer, useController = false, autoPlay = false)
+            MasterExoPlayerHelper(mContext = it, id = R.id.masterExoPlayer, useController = false, autoPlay = true)
         }
         masterExoPlayerHelper?.makeLifeCycleAware(this)
 
@@ -140,7 +140,14 @@ class SubRedditFragment : BaseFragment() {
             postVoteRequest?.let {
                 postsAdapter.currentList?.get(postVoteRequest.clickedPosition)?.likes = postVoteRequest.isUpvote
                 //postsAdapter.submitList(postsAdapter.currentList)
-                postsAdapter.notifyItemChanged(postVoteRequest.clickedPosition)
+                postVoteRequest.isUpvote?.let {
+                    if(it){
+                        postsAdapter.currentList?.get(postVoteRequest.clickedPosition)?.score = postVoteRequest.postItem.score?.plus(1)
+                    } else {
+                        postsAdapter.currentList?.get(postVoteRequest.clickedPosition)?.score = postVoteRequest.postItem.score?.minus(1)
+                    }
+                }
+                postsAdapter.notifyItemChanged(postVoteRequest.clickedPosition, postsAdapter.currentList?.get(postVoteRequest.clickedPosition))
                 postsViewModel.postVoteLiveData.postValue(null)
             }
         })

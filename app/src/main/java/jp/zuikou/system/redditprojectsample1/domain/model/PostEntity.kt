@@ -50,7 +50,7 @@ data class PostEntity (
     val removalReason: Any?,
     val reportReasons: Any?,
     val saved: Boolean?,
-    val score: Int?,
+    var score: Int?,
     val selftext: String?,
     val selftextHtml: String?,
     val sendReplies: Boolean?,
