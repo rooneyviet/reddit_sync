@@ -26,6 +26,7 @@ import jp.zuikou.system.redditprojectsample1.presentation.repository.SubcribersR
 import jp.zuikou.system.redditprojectsample1.presentation.ui.PostsPagedListAdapter
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.PostsViewModel
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
 import org.koin.core.module.Module
@@ -83,7 +84,7 @@ val postsModule: Module = module {
     factory { (retryCallback: () -> Unit,
                   clickItem: (post: PostEntity, image: ImageView) -> Unit,
                   upvoteDownvote: (postVoteRequest: PostVoteRequest) -> Unit) ->
-        PostsPagedListAdapter(retryCallback, clickItem, upvoteDownvote)
+        PostsPagedListAdapter(retryCallback, androidContext(), clickItem, upvoteDownvote)
     }
 
 

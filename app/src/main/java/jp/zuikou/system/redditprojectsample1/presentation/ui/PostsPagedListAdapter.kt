@@ -1,5 +1,6 @@
 package jp.zuikou.system.redditprojectsample1.presentation.ui
 
+import android.content.Context
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.paging.PagedListAdapter
@@ -11,6 +12,7 @@ import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.Networ
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.PostVoteRequest
 
 class PostsPagedListAdapter(private val retryCallback: () -> Unit,
+                            private val mContext: Context,
                             private val clickItem: (post: PostEntity, image: ImageView) -> Unit,
                             private val upvoteDownvote: (postVoteRequest: PostVoteRequest) -> Unit) : PagedListAdapter<PostEntity,
         RecyclerView.ViewHolder>(PostDiffCallback) {
@@ -28,8 +30,8 @@ class PostsPagedListAdapter(private val retryCallback: () -> Unit,
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (getItemViewType(position)) {
-            R.layout.list_item_post -> (holder as PostViewHolder).bindTo(getItem(position), clickItem, upvoteDownvote, position)
-            R.layout.list_item_post_vote_on_the_right_layout -> (holder as PostViewHolder).bindTo(getItem(position), clickItem, upvoteDownvote, position)
+            R.layout.list_item_post -> (holder as PostViewHolder).bindTo(getItem(position), clickItem, upvoteDownvote, position, mContext)
+            R.layout.list_item_post_vote_on_the_right_layout -> (holder as PostViewHolder).bindTo(getItem(position), clickItem, upvoteDownvote, position, mContext)
             R.layout.list_item_network_state -> (holder as NetworkStateViewHolder).bindTo(networkState)
         }
     }

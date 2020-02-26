@@ -1,10 +1,12 @@
 package jp.zuikou.system.redditprojectsample1.presentation.ui
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.exoplayer2.Player
 import jp.zuikou.system.redditprojectsample1.R
 import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.extension.load
@@ -32,7 +34,8 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         post: PostEntity?,
         clickItem: (post: PostEntity, image: ImageView) -> Unit,
         upvoteDownvote: (postVoteRequest: PostVoteRequest) -> Unit,
-        position: Int
+        position: Int,
+        mContext: Context
     ) {
         if (post == null) return
 
@@ -102,8 +105,16 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             Timber.d("PAFAPFJPSP "+post.redditVideoEntity?.fallbackUrl)
             itemView.masterExoPlayer.visibility = View.VISIBLE
             itemView.masterExoPlayer.url = post.redditVideoEntity?.fallbackUrl
+            itemView.masterExoPlayer.imageView = itemView.imageViewThumb
         } else {
-            itemView.masterExoPlayer.visibility = View.GONE
+            itemView.masterExoPlayer.visibility = View.INVISIBLE
+            itemView.masterExoPlayer.imageView = null
+        }
+
+        itemView.masterExoPlayer.setOnClickListener {
+            val isPlaying = itemView.masterExoPlayer.playerView?.player?.playbackState == Player.STATE_READY && itemView.masterExoPlayer.playerView?.player?.playWhenReady ?: false
+
+            itemView.masterExoPlayer.playerView?.player?.playWhenReady = !isPlaying
         }
 
     }
