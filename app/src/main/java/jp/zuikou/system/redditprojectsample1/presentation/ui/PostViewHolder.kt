@@ -98,7 +98,7 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             itemView.imageViewThumb.load(imageUrl.url, imageUrl.width, imageUrl.height)
         }
 
-        if((post.isGif ) || (post.redditVideoEntity!=null && post.redditVideoEntity.isGif)){
+        if((post.isGif ) || (post.redditVideoEntity!=null)){
             Timber.d("PAFAPFJPSP "+post.redditVideoEntity?.fallbackUrl)
             itemView.masterExoPlayer.visibility = View.VISIBLE
             itemView.masterExoPlayer.url = post.redditVideoEntity?.fallbackUrl
