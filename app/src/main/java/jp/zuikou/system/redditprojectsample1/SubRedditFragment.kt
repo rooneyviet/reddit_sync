@@ -57,6 +57,8 @@ class SubRedditFragment : BaseFragment() {
 
     private lateinit var shareMainViewModel: MainViewModel
 
+    //private lateinit var selector: PressablePlayerSelector
+
     //private lateinit var mAdapter2: PostsPagedListAdapter
 
 

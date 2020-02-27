@@ -27,7 +27,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@tools:sample/avatars" />
 
-        <com.master.exoplayer.MasterExoPlayer
+        <com.google.android.exoplayer2.ui.PlayerView
             android:id="@+id/masterExoPlayer"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -35,7 +35,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/avatars" />
+            tools:srcCompat="@tools:sample/avatars"
+            app:keep_content_on_player_reset="true"
+            app:resize_mode="fixed_width"
+            app:show_buffering="when_playing"
+            app:surface_type="texture_view"
+            app:use_controller="true"
+            app:player_layout_id="@layout/toro_exo_player_view">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/posterView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                />
+        </com.google.android.exoplayer2.ui.PlayerView>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
