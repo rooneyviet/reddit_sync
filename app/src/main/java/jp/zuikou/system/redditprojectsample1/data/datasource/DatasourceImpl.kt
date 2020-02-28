@@ -18,6 +18,7 @@ import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import org.joda.time.LocalDateTime
 import org.koin.core.context.GlobalContext
 import timber.log.Timber
+import java.util.*
 
 class DatasourceImpl(
     private var service: PostsServiceAPI,
@@ -79,7 +80,8 @@ class DatasourceImpl(
                     ?.map { it.data }
                     ?.mapNotNull { it }
 
-                val rsubcribersList = JsonRSubSubcribersMapper.transformToList(list ?: emptyList())
+                val rsubcribersList = JsonRSubSubcribersMapper.transformToList(list ?: emptyList()).filter { it.subredditType != "user" }.sortedBy {
+                    it.displayName?.toLowerCase(Locale.ROOT) }
                 Pair(Pagination(json.data?.after), rsubcribersList)
             }
 

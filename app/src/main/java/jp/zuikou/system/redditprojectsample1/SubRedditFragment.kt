@@ -18,6 +18,7 @@ import com.master.exoplayer.MasterExoPlayerHelper
 import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.PostVoteRequest
+import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditRequest
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditSortByDayEnum
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditTypeEnum
 import jp.zuikou.system.redditprojectsample1.presentation.ui.BaseFragment
@@ -57,6 +58,9 @@ class SubRedditFragment : BaseFragment() {
 
     private lateinit var shareMainViewModel: MainViewModel
 
+    val currentSubRedditRequestValue : SubRedditRequest
+        get() = shareMainViewModel.currentSubRedditRequestLiveData.value?: SubRedditRequest("")
+
     //private lateinit var selector: PressablePlayerSelector
 
     //private lateinit var mAdapter2: PostsPagedListAdapter
@@ -87,7 +91,7 @@ class SubRedditFragment : BaseFragment() {
         //GlobalContext.get().koin.setProperty(PROPERTY_PAGED_LIST, getPagedListConfig())
         // Inflate the layout for this fragment
         //SharedPreferenceSingleton.setAccessTokenEntityNull()
-        Timber.d(SharedPreferenceSingleton.getAccessTokenEntity()?.accessToken)
+        Timber.d("JBFDJFBDF "+SharedPreferenceSingleton.getAccessTokenEntity()?.accessToken)
         return inflater.inflate(R.layout.fragment_sub_reddit, container, false)
     }
 
@@ -166,8 +170,8 @@ class SubRedditFragment : BaseFragment() {
             })
     }
 
-    fun observePostData(subreddit: String? = shareMainViewModel.currentSubRedditRequestValue.subReddit,
-                        type: SubRedditTypeEnum? = shareMainViewModel.currentSubRedditRequestValue.subType,
+    fun observePostData(subreddit: String? = currentSubRedditRequestValue.subReddit,
+                        type: SubRedditTypeEnum? = currentSubRedditRequestValue.subType,
                         subRedditSortByDayEnum: SubRedditSortByDayEnum? = null,
                         isReset: Boolean = false) {
         shareMainViewModel.saveCurrentSubCurrentRequest(subreddit, type, subRedditSortByDayEnum)

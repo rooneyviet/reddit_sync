@@ -1,8 +1,10 @@
 package jp.zuikou.system.redditprojectsample1.presentation.navigation_drawer
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +15,9 @@ import kotlinx.android.synthetic.main.rrsubscriberslayout.view.*
 
 class DrawerLayoutPagedListAdapter(private val subClicked: (subreddit: String)-> Unit):
     PagedListAdapter<RSubSubcribersEntity,DrawerLayoutPagedListAdapter.SubcribersDrawerViewHolder>(SubscribersDiffCallback) {
+
+     private var clickedPosition = -1
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -20,22 +25,30 @@ class DrawerLayoutPagedListAdapter(private val subClicked: (subreddit: String)->
         val layoutInflater = LayoutInflater.from(parent.context)
         val mView = layoutInflater.inflate(R.layout.rrsubscriberslayout, parent, false)
 
-        return SubcribersDrawerViewHolder(mView)
+        return SubcribersDrawerViewHolder(mView, parent.context)
     }
 
     override fun onBindViewHolder(
         holder: SubcribersDrawerViewHolder,
         position: Int
     ) {
-        holder.bindData(getItem(position), subClicked)
+        holder.bindData(getItem(position), position, subClicked)
     }
 
-    class SubcribersDrawerViewHolder(itemvView: View): RecyclerView.ViewHolder(itemvView) {
+    fun setClickedPosition(position: Int){
+        notifyDataSetChanged()
+        clickedPosition = position
+    }
+
+    inner class SubcribersDrawerViewHolder(itemvView: View, private val mContext: Context): RecyclerView.ViewHolder(itemvView) {
         fun bindData (rSubSubcribersEntity: RSubSubcribersEntity?,
+                      position: Int,
                       subClicked: (subreddit: String)-> Unit) {
             itemView.subcribersText.text = rSubSubcribersEntity?.displayName
             itemView.setOnClickListener {
                 rSubSubcribersEntity?.displayNamePrefixed?.let { prefixDisplaySub ->
+                    clickedPosition = position
+                    notifyDataSetChanged()
                     subClicked.invoke(prefixDisplaySub)
                 }
             }
@@ -46,6 +59,12 @@ class DrawerLayoutPagedListAdapter(private val subClicked: (subreddit: String)->
                 rSubSubcribersEntity?.communityIcon?.let {
                     itemView.subcribersImage.loadImageCircle(it)
                 }
+            }
+
+            if(clickedPosition == position){
+                itemView.rrsubscribersMainLayout.setBackgroundColor(ContextCompat.getColor(mContext, R.color.rrsubscriberTextSelectedBackgroundColor))
+            } else {
+                itemView.rrsubscribersMainLayout.setBackgroundColor(0)
             }
             /*rSubSubcribersEntity?.communityIcon?.let {
 

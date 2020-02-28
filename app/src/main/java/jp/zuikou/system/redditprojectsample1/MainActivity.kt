@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import jp.zuikou.system.redditprojectsample1.domain.model.RSubSubcribersEntity
 import jp.zuikou.system.redditprojectsample1.domain.repository.LoginRepository
 import jp.zuikou.system.redditprojectsample1.presentation.data.datasource.NetworkState
+import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditRequest
 import jp.zuikou.system.redditprojectsample1.presentation.navigation.MainHostFragment
 import jp.zuikou.system.redditprojectsample1.presentation.navigation_drawer.DrawerLayoutPagedListAdapter
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
@@ -28,6 +29,7 @@ import jp.zuikou.system.redditprojectsample1.util.ThemeHelper
 import jp.zuikou.system.redditprojectsample1.util.extension.gone
 import jp.zuikou.system.redditprojectsample1.util.extension.visible
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.profile_sidebar_layout.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -41,6 +43,9 @@ class MainActivity : BaseAuthActivity() {
 
     private val drawerPagedListAdapter: DrawerLayoutPagedListAdapter by inject{
         parametersOf({subreddit: String -> subClicked(subreddit) }) }
+
+    val currentSubRedditRequestValue : SubRedditRequest
+        get() = mainViewModel.currentSubRedditRequestLiveData.value?: SubRedditRequest("")
 
 
     private val loginRepository by inject<LoginRepository>()
@@ -146,6 +151,8 @@ class MainActivity : BaseAuthActivity() {
         if(drawerLayout.isDrawerOpen(GravityCompat.START)){
             drawerLayout.closeDrawer(GravityCompat.START)
         }
+
+        toolbar_main.title = currentSubRedditRequestValue.subReddit
     }
 
 

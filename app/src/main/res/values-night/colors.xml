@@ -11,4 +11,5 @@
     <color name="textSmallTextColor">#CFCFCF</color>
     <color name="textMediumTextColor">#FDFDFD</color>
     <color name="actionBarTextColor">#FDFDFD</color>
+    <color name="rrsubscriberTextSelectedBackgroundColor">#5C5C5C</color>
 </resources>

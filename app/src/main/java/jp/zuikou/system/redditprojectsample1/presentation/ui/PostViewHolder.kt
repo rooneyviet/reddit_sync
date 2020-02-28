@@ -133,6 +133,8 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view), ToroPlayer,
             itemView.posterView.load(imageUrl.url, imageUrl.width, imageUrl.height)
         }
 
+
+
         /*itemView.masterExoPlayer.setOnClickListener {
             val isPlaying = itemView.masterExoPlayer.playerView?.player?.playbackState == Player.STATE_READY && itemView.masterExoPlayer.playerView?.player?.playWhenReady ?: false
 

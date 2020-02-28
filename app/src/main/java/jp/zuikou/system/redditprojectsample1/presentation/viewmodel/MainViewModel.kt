@@ -16,14 +16,14 @@ class MainViewModel (private var subcribersRepositoryPresent: PaginationReposito
         subcribersRepositoryPresent.setCompositeDisposable(compositeDisposable)
     }
 
-    val currentSubRedditRequestValue : SubRedditRequest
-        get() = currentSubRedditRequestLiveData.value?: SubRedditRequest("")
 
-    private val currentSubRedditRequestLiveData = MutableLiveData<SubRedditRequest>()
+
+    val currentSubRedditRequestLiveData = MutableLiveData<SubRedditRequest>()
 
 
     fun saveCurrentSubCurrentRequest(subreddit:String?= null, subtype: SubRedditTypeEnum? = null, subSortDate: SubRedditSortByDayEnum? = null){
         val currentValue = SubRedditRequest(subreddit?: "", subtype, subSortDate)
+        currentSubRedditRequestLiveData.value = currentValue
         currentSubRedditRequestLiveData.postValue(currentValue)
     }
 

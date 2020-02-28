@@ -10,6 +10,7 @@
     <color name="textSmallTextColor">#585858</color>
     <color name="textMediumTextColor">#161616</color>
     <color name="actionBarTextColor">#161616</color>
+    <color name="rrsubscriberTextSelectedBackgroundColor">#DADADA</color>
     <!--<color name="colorPrimaryVariant">#008577</color>
     <color name="colorSecondary">#00574B</color>
     <color name="colorSecondaryVariant">#D81B60</color>
