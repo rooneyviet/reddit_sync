@@ -10,6 +10,7 @@ import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import jp.zuikou.system.redditprojectsample1.R
 
 fun ImageView.load(url: String, mWidth: Int, mHeight: Int, isGif: Boolean = false, loadOnlyFromCache: Boolean = false, onLoadingFinished: () -> Unit = {}) {
     if (url.isEmpty()){
@@ -70,6 +71,7 @@ fun ImageView.load(url: String, mWidth: Int, mHeight: Int, isGif: Boolean = fals
             .asGif()
             .load(url)
             .override(mWidth, mHeight)
+            .placeholder(R.drawable.image_holder)
             .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).onlyRetrieveFromCache(loadOnlyFromCache))
             .listener(gifListener)
             .into(this)
@@ -77,6 +79,7 @@ fun ImageView.load(url: String, mWidth: Int, mHeight: Int, isGif: Boolean = fals
         Glide.with(this)
             .load(url)
             .override(mWidth, mHeight)
+            .placeholder(R.drawable.image_holder)
             .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).onlyRetrieveFromCache(loadOnlyFromCache))
             .listener(listener)
             .into(this)
