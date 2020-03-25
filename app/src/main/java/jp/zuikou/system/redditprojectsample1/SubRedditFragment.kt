@@ -82,8 +82,8 @@ class SubRedditFragment : BaseFragment() {
     },
         {post: PostEntity, image: ImageView -> clickItem(post, image) },
         {postVoteRequest: PostVoteRequest -> upvoteDowvoteItem(postVoteRequest)},
-        {imageUrl: String, isLongPress: Boolean -> longPressImage(imageUrl, isLongPress)},
-        {imageUrl: String -> singlePressImage(imageUrl)})}
+        {imageUrl: String, isLongPress: Boolean, sharedImageView: ImageView -> longPressImage(imageUrl, isLongPress, sharedImageView)},
+        {imageUrl: String, sharedImageView: ImageView -> singlePressImage(imageUrl, sharedImageView)})}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -223,7 +223,7 @@ class SubRedditFragment : BaseFragment() {
 
     }
 
-    private fun longPressImage(imageUrl: String, isLongPressOn: Boolean) {
+    private fun longPressImage(imageUrl: String, isLongPressOn: Boolean, sharedImageView: ImageView) {
         val ft = childFragmentManager.beginTransaction()
         val bundle = Bundle()
         bundle.putString("imageUrl", imageUrl);
@@ -245,7 +245,7 @@ class SubRedditFragment : BaseFragment() {
         }
     }
 
-    private fun singlePressImage(imageUrl: String) {
+    private fun singlePressImage(imageUrl: String, sharedImageView: ImageView) {
         val ft = childFragmentManager.beginTransaction()
         val bundle = Bundle()
         bundle.putString("imageUrl", imageUrl);

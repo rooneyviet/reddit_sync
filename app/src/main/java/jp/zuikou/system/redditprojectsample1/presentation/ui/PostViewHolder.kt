@@ -52,8 +52,8 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view), ToroPlayer,
         post: PostEntity?,
         clickItem: (post: PostEntity, image: ImageView) -> Unit,
         upvoteDownvote: (postVoteRequest: PostVoteRequest) -> Unit,
-        imageLongPress: (imageUrl: String, isLongPress: Boolean) -> Unit,
-        imageClickPress: (imageUrl: String) -> Unit,
+        imageLongPress: (imageUrl: String, isLongPress: Boolean, sharedImageView: ImageView) -> Unit,
+        imageClickPress: (imageUrl: String, sharedImageView: ImageView) -> Unit,
         position: Int,
         mContext: Context
     ) {
@@ -134,18 +134,19 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view), ToroPlayer,
         }
 
         itemView.imageViewThumb.longClick{
-            imageLongPress.invoke(imageUrl?.url!!, true)
+            imageLongPress.invoke(imageUrl?.url!!, true, itemView.imageViewThumb)
         }
 
         itemView.imageViewThumb.setOnTouchListener { view, motionEvent ->
             if(motionEvent.action == MotionEvent.ACTION_UP){
-                imageLongPress.invoke(imageUrl?.url!!, false)
+                imageLongPress.invoke(imageUrl?.url!!, false, itemView.imageViewThumb)
             }
             false
         }
 
         itemView.imageViewThumb.click{
-            imageClickPress.invoke(imageUrl?.url!!)
+//            ViewCompat.setTransitionName(itemView.imageViewThumb, imageUrl?.url);
+            imageClickPress.invoke(imageUrl?.url!!, itemView.imageViewThumb)
         }
 
 

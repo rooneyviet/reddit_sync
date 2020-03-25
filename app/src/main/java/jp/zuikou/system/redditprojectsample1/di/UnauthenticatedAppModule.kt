@@ -84,8 +84,8 @@ val postsModule: Module = module {
     factory { (retryCallback: () -> Unit,
                   clickItem: (post: PostEntity, image: ImageView) -> Unit,
                   upvoteDownvote: (postVoteRequest: PostVoteRequest) -> Unit,
-                    imageLongPress: (imageUrl: String, isLongPress: Boolean) -> Unit,
-                    imageClickPress: (imageUrl: String) -> Unit) ->
+                    imageLongPress: (imageUrl: String, isLongPress: Boolean, sharedImageView: ImageView) -> Unit,
+                    imageClickPress: (imageUrl: String, sharedImageView: ImageView) -> Unit) ->
         PostsPagedListAdapter(retryCallback, androidContext(), clickItem, upvoteDownvote, imageLongPress, imageClickPress)
     }
 

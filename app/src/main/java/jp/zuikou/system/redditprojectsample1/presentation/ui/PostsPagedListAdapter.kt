@@ -15,8 +15,8 @@ class PostsPagedListAdapter(private val retryCallback: () -> Unit,
                             private val mContext: Context,
                             private val clickItem: (post: PostEntity, image: ImageView) -> Unit,
                             private val upvoteDownvote: (postVoteRequest: PostVoteRequest) -> Unit,
-                            private val imageLongPress: (imageUrl: String, isLongPress: Boolean) -> Unit,
-                            private val imageClickPress: (imageUrl: String) -> Unit) : PagedListAdapter<PostEntity,
+                            private val imageLongPress: (imageUrl: String, isLongPress: Boolean, sharedImageView: ImageView) -> Unit,
+                            private val imageClickPress: (imageUrl: String, sharedImageView: ImageView) -> Unit) : PagedListAdapter<PostEntity,
         RecyclerView.ViewHolder>(PostDiffCallback) {
 
     private var networkState: NetworkState? = null
