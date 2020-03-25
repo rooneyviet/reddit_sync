@@ -3,6 +3,7 @@ package jp.zuikou.system.redditprojectsample1.presentation.ui
 import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -17,10 +18,7 @@ import jp.zuikou.system.redditprojectsample1.R
 import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
 import jp.zuikou.system.redditprojectsample1.extension.load
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.PostVoteRequest
-import jp.zuikou.system.redditprojectsample1.util.extension.clickOnAuthenContent
-import jp.zuikou.system.redditprojectsample1.util.extension.gone
-import jp.zuikou.system.redditprojectsample1.util.extension.loadImage
-import jp.zuikou.system.redditprojectsample1.util.extension.visible
+import jp.zuikou.system.redditprojectsample1.util.extension.*
 import kotlinx.android.synthetic.main.list_item_post.view.commentNumberText
 import kotlinx.android.synthetic.main.list_item_post.view.downvoteImage
 import kotlinx.android.synthetic.main.list_item_post.view.imageViewThumb
@@ -54,6 +52,8 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view), ToroPlayer,
         post: PostEntity?,
         clickItem: (post: PostEntity, image: ImageView) -> Unit,
         upvoteDownvote: (postVoteRequest: PostVoteRequest) -> Unit,
+        imageLongPress: (imageUrl: String, isLongPress: Boolean) -> Unit,
+        imageClickPress: (imageUrl: String) -> Unit,
         position: Int,
         mContext: Context
     ) {
@@ -133,6 +133,20 @@ class PostViewHolder(view: View) : RecyclerView.ViewHolder(view), ToroPlayer,
             itemView.posterView.load(imageUrl.url, imageUrl.width, imageUrl.height)
         }
 
+        itemView.imageViewThumb.longClick{
+            imageLongPress.invoke(imageUrl?.url!!, true)
+        }
+
+        itemView.imageViewThumb.setOnTouchListener { view, motionEvent ->
+            if(motionEvent.action == MotionEvent.ACTION_UP){
+                imageLongPress.invoke(imageUrl?.url!!, false)
+            }
+            false
+        }
+
+        itemView.imageViewThumb.click{
+            imageClickPress.invoke(imageUrl?.url!!)
+        }
 
 
         /*itemView.masterExoPlayer.setOnClickListener {

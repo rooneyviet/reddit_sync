@@ -12,7 +12,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.navOptions
 import androidx.paging.PagedList
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.master.exoplayer.MasterExoPlayerHelper
 import jp.zuikou.system.redditprojectsample1.domain.model.PostEntity
@@ -22,9 +21,11 @@ import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditRe
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditSortByDayEnum
 import jp.zuikou.system.redditprojectsample1.presentation.data.model.SubRedditTypeEnum
 import jp.zuikou.system.redditprojectsample1.presentation.ui.BaseFragment
+import jp.zuikou.system.redditprojectsample1.presentation.ui.ImagePreviewDialogFragment
 import jp.zuikou.system.redditprojectsample1.presentation.ui.PostsPagedListAdapter
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.MainViewModel
 import jp.zuikou.system.redditprojectsample1.presentation.viewmodel.PostsViewModel
+import jp.zuikou.system.redditprojectsample1.util.CustomLinearLayoutManager
 import jp.zuikou.system.redditprojectsample1.util.SharedPreferenceSingleton
 import kotlinx.android.synthetic.main.fragment_sub_reddit.*
 import kotlinx.android.synthetic.main.include_posts_list.*
@@ -65,12 +66,24 @@ class SubRedditFragment : BaseFragment() {
 
     //private lateinit var mAdapter2: PostsPagedListAdapter
 
+    private lateinit var customLinearLayoutManager: CustomLinearLayoutManager
+
+    private val dialogFragment = ImagePreviewDialogFragment()
+
 
     private val postsAdapter: PostsPagedListAdapter by inject{ parametersOf({
         postsViewModel.retry()
+
+        //retryCallback: () -> Unit,
+        //                  clickItem: (post: PostEntity, image: ImageView) -> Unit,
+        //                  upvoteDownvote: (postVoteRequest: PostVoteRequest) -> Unit,
+        //                    imageLongPress: (imageUrl: String) -> Unit,
+        //                    imageClickPress: (imageUrl: String) -> Unit
     },
         {post: PostEntity, image: ImageView -> clickItem(post, image) },
-        {postVoteRequest: PostVoteRequest -> upvoteDowvoteItem(postVoteRequest)}) }
+        {postVoteRequest: PostVoteRequest -> upvoteDowvoteItem(postVoteRequest)},
+        {imageUrl: String, isLongPress: Boolean -> longPressImage(imageUrl, isLongPress)},
+        {imageUrl: String -> singlePressImage(imageUrl)})}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,7 +132,9 @@ class SubRedditFragment : BaseFragment() {
         }
         masterExoPlayerHelper?.makeLifeCycleAware(this)
 
-        recyclerView.layoutManager = LinearLayoutManager(this.context)
+        customLinearLayoutManager = CustomLinearLayoutManager(this.context)
+
+        recyclerView.layoutManager = customLinearLayoutManager
         recyclerView.adapter = postsAdapter
 
         masterExoPlayerHelper?.attachToRecyclerView(recyclerView)
@@ -207,6 +222,42 @@ class SubRedditFragment : BaseFragment() {
     private fun clickItem(post: PostEntity, image: ImageView) {
 
     }
+
+    private fun longPressImage(imageUrl: String, isLongPressOn: Boolean) {
+        val ft = childFragmentManager.beginTransaction()
+        val bundle = Bundle()
+        bundle.putString("imageUrl", imageUrl);
+        dialogFragment.arguments = bundle
+
+        val prev = childFragmentManager.findFragmentByTag("imagedialog")
+        if(isLongPressOn){
+            customLinearLayoutManager.setScrollEnabled(false)
+            if (prev != null) {
+                ft.remove(prev)
+            }
+            //ft.addToBackStack(null)
+            if(!dialogFragment.isAdded) dialogFragment.show(ft, "imagedialog")
+        } else {
+            if (prev != null) {
+                ft.remove(prev).commit()
+            }
+            customLinearLayoutManager.setScrollEnabled(true)
+        }
+    }
+
+    private fun singlePressImage(imageUrl: String) {
+        val ft = childFragmentManager.beginTransaction()
+        val bundle = Bundle()
+        bundle.putString("imageUrl", imageUrl);
+        dialogFragment.arguments = bundle
+        val prev = childFragmentManager.findFragmentByTag("imagedialog")
+        if (prev != null) {
+            ft.remove(prev)
+        }
+        //ft.addToBackStack(null)
+        if(!dialogFragment.isAdded) dialogFragment.show(ft, "imagedialog")
+    }
+
 
     private fun upvoteDowvoteItem(postVoteRequest: PostVoteRequest) {
         postsViewModel.votePost(postVoteRequest)

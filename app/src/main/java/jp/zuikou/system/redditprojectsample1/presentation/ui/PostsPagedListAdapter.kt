@@ -14,7 +14,9 @@ import jp.zuikou.system.redditprojectsample1.presentation.data.model.PostVoteReq
 class PostsPagedListAdapter(private val retryCallback: () -> Unit,
                             private val mContext: Context,
                             private val clickItem: (post: PostEntity, image: ImageView) -> Unit,
-                            private val upvoteDownvote: (postVoteRequest: PostVoteRequest) -> Unit) : PagedListAdapter<PostEntity,
+                            private val upvoteDownvote: (postVoteRequest: PostVoteRequest) -> Unit,
+                            private val imageLongPress: (imageUrl: String, isLongPress: Boolean) -> Unit,
+                            private val imageClickPress: (imageUrl: String) -> Unit) : PagedListAdapter<PostEntity,
         RecyclerView.ViewHolder>(PostDiffCallback) {
 
     private var networkState: NetworkState? = null
@@ -30,8 +32,8 @@ class PostsPagedListAdapter(private val retryCallback: () -> Unit,
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (getItemViewType(position)) {
-            R.layout.list_item_post -> (holder as PostViewHolder).bindTo(getItem(position), clickItem, upvoteDownvote, position, mContext)
-            R.layout.list_item_post_vote_on_the_right_layout -> (holder as PostViewHolder).bindTo(getItem(position), clickItem, upvoteDownvote, position, mContext)
+            R.layout.list_item_post -> (holder as PostViewHolder).bindTo(getItem(position), clickItem, upvoteDownvote, imageLongPress, imageClickPress, position, mContext)
+            R.layout.list_item_post_vote_on_the_right_layout -> (holder as PostViewHolder).bindTo(getItem(position), clickItem, upvoteDownvote, imageLongPress, imageClickPress, position, mContext)
             R.layout.list_item_network_state -> (holder as NetworkStateViewHolder).bindTo(networkState)
         }
     }

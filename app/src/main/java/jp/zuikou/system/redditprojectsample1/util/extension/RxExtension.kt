@@ -26,6 +26,23 @@ fun View.click(activity: FragmentActivity, duration: Long = DURATION_DELAY, clic
             clickSuccess()
         }
 
+fun View.click(duration: Long = DURATION_DELAY, clickSuccess: () -> Unit) =
+    RxView.clicks(this)
+        .throttleFirst(duration, TimeUnit.MILLISECONDS)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe {
+            clickSuccess()
+        }
+
+
+fun View.longClick(duration: Long = DURATION_DELAY, clickSuccess: () -> Unit) =
+    RxView.longClicks(this)
+        .throttleFirst(duration, TimeUnit.MILLISECONDS)
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe {
+            clickSuccess()
+        }
+
 
 fun View.clickOnAuthenContent(clickSuccess: () -> Unit, duration: Long = DURATION_DELAY) =
     RxView.clicks(this)
